@@ -10,3 +10,11 @@ tasks:
     dir: ./src/RoomsCalendar.Client
     cmds:
       - npx @tailwindcss/cli -i "./Styles/app.css" -o "./wwwroot/css/app.css" --watch
+
+  run:
+    summary: Run the application in development mode
+    dir: .
+    vars:
+      PROJECT_DIR: "./src/RoomsCalendar.Server"
+    cmds:
+      - dotnet run --project {{.PROJECT_DIR}} -c Debug -lp http

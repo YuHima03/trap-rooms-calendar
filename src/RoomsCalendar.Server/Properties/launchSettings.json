@@ -2,8 +2,6 @@
   "profiles": {
     "http": {
       "commandName": "Project",
-      "commandLineArgs": "--env-files $(SolutionDir)/.env",
-      "workingDirectory": "$(TargetDir)",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -14,8 +12,6 @@
     },
     "https": {
       "commandName": "Project",
-      "commandLineArgs": "--env-files $(SolutionDir)/.env",
-      "workingDirectory": "$(TargetDir)",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
