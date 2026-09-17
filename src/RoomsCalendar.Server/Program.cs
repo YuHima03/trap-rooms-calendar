@@ -1,3 +1,4 @@
+using Knoq;
 using Knoq.Extensions.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -86,12 +87,33 @@ public class Program
                 opt.CookieAuthToken = baseOptions.TraqCookieAuthenticationToken;
             });
         });
-        services.AddAuthenticatedKnoqApiClient(
-            (sp, knoqOptions) => knoqOptions.BaseAddress = sp.GetRequiredService<IOptions<KnoqClientOptions>>().Value.KnoqApiBaseAddress ?? string.Empty,
-            (sp, traqAuthOptions) => traqAuthOptions.UseCookieAuthentication(
-                sp.GetRequiredService<IOptions<TraqClientOptions>>().Value.TraqCookieAuthenticationToken ?? throw new Exception("The cookie token for traQ service is not set.")
-            )
-        );
+        services.AddSingleton<IConfigureOptions<KnoqApiClientOptions>>(sp =>
+        {
+            return new ConfigureOptions<KnoqApiClientOptions>(opt =>
+            {
+                var baseOptions = sp.GetRequiredService<IOptions<KnoqClientOptions>>().Value;
+                opt.BaseAddress = baseOptions.KnoqApiBaseAddress ?? string.Empty;
+            });
+        });
+        services.AddSingleton(sp =>
+        {
+            return new ApiClientProvider<KnoqApiClient>(sp.GetRequiredService<ILogger<ApiClientProvider<KnoqApiClient>>>())
+            {
+                AliveChecker = (client, ct) => client.CheckSessionIsAliveAsync(ct),
+                Factory = ct =>
+                {
+                    TraqAuthenticationInfo authInfo = new();
+                    authInfo.UseCookieAuthentication(
+                        sp.GetRequiredService<IOptions<TraqClientOptions>>().Value.TraqCookieAuthenticationToken ?? throw new Exception("The cookie token for traQ service is not set."));
+
+                    return KnoqApiClient.CreateClientAsync(
+                        authInfo,
+                        sp.GetRequiredService<IOptions<KnoqApiClientOptions>>().Value,
+                        sp.GetRequiredService<IOptions<TraqApiClientOptions>>().Value,
+                        ct);
+                }
+            };
+        });
 
         //
         // Configure collectors and providers for rooms and events

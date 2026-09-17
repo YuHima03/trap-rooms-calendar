@@ -6,7 +6,7 @@ using ZLinq;
 namespace RoomsCalendar.Server.Services
 {
     sealed class RoomsAndEventsCollector(
-        KnoqApiClient knoq,
+        ApiClientProvider<KnoqApiClient> knoqProvider,
         ILogger<RoomsAndEventsCollector> logger,
         RoomsAndEventsProvider dataProvider,
         TimeZoneInfo? timeZoneInfo = null
@@ -53,7 +53,8 @@ namespace RoomsCalendar.Server.Services
         {
             var utcNow = DateTimeOffset.UtcNow;
             var since = GetSearchSinceUtc(fullCollection);
-            var events = await knoq.Events.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
+            var knoq = await knoqProvider.TryGetClientAsync(ct);
+            var events = await knoq!.Events.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
             using var filtered = events
                 .AsValueEnumerable()
                 .Select(InternalExtensions.KnoqResponseToDomainEvent)
@@ -65,7 +66,8 @@ namespace RoomsCalendar.Server.Services
         {
             var utcNow = DateTimeOffset.UtcNow;
             var since = GetSearchSinceUtc(fullCollection);
-            var rooms = await knoq.Rooms.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
+            var knoq = await knoqProvider.TryGetClientAsync(ct);
+            var rooms = await knoq!.Rooms.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
             using var filterd = rooms
                 .AsValueEnumerable()
                 .Where(r => r.Verified is true)
