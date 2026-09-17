@@ -38,7 +38,6 @@ public class Program
 
         if (logger.IsEnabled(LogLevel.Information))
         {
-            logger.LogInformation("Content root: {WorkingDirectory}", app.Environment.ContentRootPath);
             logger.LogInformation("App timezone: {TimeZone}", app.Services.GetRequiredService<TimeZoneInfo>().Id);
         }
 

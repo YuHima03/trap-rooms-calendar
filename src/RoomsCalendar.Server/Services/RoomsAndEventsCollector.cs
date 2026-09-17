@@ -14,6 +14,16 @@ namespace RoomsCalendar.Server.Services
     {
         readonly TimeZoneInfo _timeZoneInfo = timeZoneInfo ?? TimeZoneInfo.Utc;
 
+        async ValueTask<KnoqApiClient?> GetKnoqApiClientAsync(CancellationToken ct)
+        {
+            var client = await knoqProvider.TryGetClientAsync(ct);
+            if (client is null && logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning("Failed to get knoQ API client.");
+            }
+            return client;
+        } 
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await Task.Delay(TimeSpan.FromSeconds(20), stoppingToken);
@@ -53,8 +63,12 @@ namespace RoomsCalendar.Server.Services
         {
             var utcNow = DateTimeOffset.UtcNow;
             var since = GetSearchSinceUtc(fullCollection);
-            var knoq = await knoqProvider.TryGetClientAsync(ct);
-            var events = await knoq!.Events.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
+            var knoq = await GetKnoqApiClientAsync(ct);
+            if (knoq is null)
+            {
+                return;
+            }
+            var events = await knoq.Events.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
             using var filtered = events
                 .AsValueEnumerable()
                 .Select(InternalExtensions.KnoqResponseToDomainEvent)
@@ -66,8 +80,12 @@ namespace RoomsCalendar.Server.Services
         {
             var utcNow = DateTimeOffset.UtcNow;
             var since = GetSearchSinceUtc(fullCollection);
-            var knoq = await knoqProvider.TryGetClientAsync(ct);
-            var rooms = await knoq!.Rooms.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
+            var knoq = await GetKnoqApiClientAsync(ct);
+            if (knoq is null)
+            {
+                return;
+            }
+            var rooms = await knoq.Rooms.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
             using var filterd = rooms
                 .AsValueEnumerable()
                 .Where(r => r.Verified is true)
