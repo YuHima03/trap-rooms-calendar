@@ -6,13 +6,23 @@ using ZLinq;
 namespace RoomsCalendar.Server.Services
 {
     sealed class RoomsAndEventsCollector(
-        KnoqApiClient knoq,
+        ApiClientProvider<KnoqApiClient> knoqProvider,
         ILogger<RoomsAndEventsCollector> logger,
         RoomsAndEventsProvider dataProvider,
         TimeZoneInfo? timeZoneInfo = null
         ) : BackgroundService
     {
         readonly TimeZoneInfo _timeZoneInfo = timeZoneInfo ?? TimeZoneInfo.Utc;
+
+        async ValueTask<KnoqApiClient?> GetKnoqApiClientAsync(CancellationToken ct)
+        {
+            var client = await knoqProvider.TryGetClientAsync(ct);
+            if (client is null && logger.IsEnabled(LogLevel.Warning))
+            {
+                logger.LogWarning("Failed to get knoQ API client.");
+            }
+            return client;
+        } 
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -53,6 +63,11 @@ namespace RoomsCalendar.Server.Services
         {
             var utcNow = DateTimeOffset.UtcNow;
             var since = GetSearchSinceUtc(fullCollection);
+            var knoq = await GetKnoqApiClientAsync(ct);
+            if (knoq is null)
+            {
+                return;
+            }
             var events = await knoq.Events.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
             using var filtered = events
                 .AsValueEnumerable()
@@ -65,6 +80,11 @@ namespace RoomsCalendar.Server.Services
         {
             var utcNow = DateTimeOffset.UtcNow;
             var since = GetSearchSinceUtc(fullCollection);
+            var knoq = await GetKnoqApiClientAsync(ct);
+            if (knoq is null)
+            {
+                return;
+            }
             var rooms = await knoq.Rooms.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
             using var filterd = rooms
                 .AsValueEnumerable()
