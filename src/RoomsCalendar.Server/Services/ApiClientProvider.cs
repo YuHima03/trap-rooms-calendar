@@ -7,7 +7,7 @@ sealed class ApiClientProvider<T>(ILogger<ApiClientProvider<T>> logger) where T 
     /// </summary>
     T? Client { get; set; }
 
-    SemaphoreSlim Semahpore { get; } = new(1, 1);
+    SemaphoreSlim Semaphore { get; } = new(1, 1);
 
     /// <summary>
     /// Gets or sets the factory method to create an instance of <typeparamref name="T"/>.
@@ -31,7 +31,7 @@ sealed class ApiClientProvider<T>(ILogger<ApiClientProvider<T>> logger) where T 
     /// <returns>An instance of <typeparamref name="T"/>; <see langword="null"/> if the client is not available.</returns>
     public async ValueTask<T?> TryGetClientAsync(CancellationToken cancellationToken = default)
     {
-        await Semahpore.WaitAsync(cancellationToken);
+        await Semaphore.WaitAsync(cancellationToken);
         try
         {
             if (Client is not null && await AliveChecker(Client, cancellationToken))
@@ -74,7 +74,7 @@ sealed class ApiClientProvider<T>(ILogger<ApiClientProvider<T>> logger) where T 
         }
         finally
         {
-            _ = Semahpore.Release();
+            _ = Semaphore.Release();
         }
 
         static TimeSpan Clamp(TimeSpan t, TimeSpan min, TimeSpan max)
