@@ -15,6 +15,6 @@ tasks:
     summary: Run the application in development mode
     dir: .
     vars:
-      PROJECT_DIR: "./src/RoomsCalendar.Server"
+      PROJECT_DIR: "./backend/RoomsCalendar.Server"
     cmds:
       - dotnet run --project {{.PROJECT_DIR}} -c Debug -lp http
