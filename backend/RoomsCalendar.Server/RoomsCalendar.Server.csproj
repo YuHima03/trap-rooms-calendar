@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.4.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.83.0" />
     <PackageReference Include="Ical.Net" Version="5.1.2" />
     <PackageReference Include="KnoqNet.Extensions.Authentication" Version="1.0.0-alpha.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0" />
@@ -22,6 +23,12 @@
     <ProjectReference Include="..\RoomsCalendar.Infrastructure\RoomsCalendar.Infrastructure.csproj" />
     <ProjectReference Include="..\RoomsCalendar.Share\RoomsCalendar.Share.csproj" />
     <ProjectReference Include="..\RoomsCalendar.Client\RoomsCalendar.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="../../proto/**/*.proto" Link="Protos/%(RecursiveDir)%(Filename)%(Extension)"
+              Access="internal" GrpcServices="Server"
+              ProtoRoot="../../proto" />
   </ItemGroup>
   
 </Project>

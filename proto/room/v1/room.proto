@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package room.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "RoomsCalendar.Server.Protos.Room.V1";
+
+service RoomService {
+  // Retrieve a list of vacant rooms for the specified time range.
+  rpc GetVacantRooms(GetVacantRoomsRequest) returns (GetVacantRoomsResponse);
+}
+
+message VerifiedRoom {
+  // The unique identifier of the room.
+  string id = 1;
+  // The name of the room.
+  string name = 2;
+}
+
+message VacantRoom {
+  // The room that is vacant.
+  VerifiedRoom room = 1;
+  // The start time of the vacant period.
+  google.protobuf.Timestamp start_time = 2;
+  // The end time of the vacant period.
+  google.protobuf.Timestamp end_time = 3;
+}
+
+message GetVacantRoomsRequest {
+  // The start time of the desired time range.
+  optional google.protobuf.Timestamp start_time = 1;
+  // The end time of the desired time range.
+  optional google.protobuf.Timestamp end_time = 2;
+}
+
+message GetVacantRoomsResponse {
+  // A list of vacant rooms for the specified time range.
+  repeated VacantRoom vacant_rooms = 1;
+}

@@ -6,6 +6,7 @@
         string PlaceName,
         DateTimeOffset StartsAt,
         DateTimeOffset EndsAt,
-        bool OccupiesRoom
+        bool OccupiesRoom,
+        bool PlaceIsVerified = false
         );
 }

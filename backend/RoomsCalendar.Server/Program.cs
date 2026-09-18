@@ -25,6 +25,7 @@ public class Program
         ConfigureCalendarServices(builder.Services, builder.Configuration);
 
         // API controllers
+        _ = builder.Services.AddGrpc();
         _ = builder.Services.AddControllers();
 
         // Razor (View)
@@ -191,6 +192,11 @@ public class Program
 
         app.UseAntiforgery();
 
+        // gRPC endpoints
+        app.MapGrpcService<Handlers.EventGrpcService>();
+        app.MapGrpcService<Handlers.RoomGrpcService>();
+
+        // HTTP API endpoints
         var handler = new Handlers.Handler();
         handler.MapHandlers(app);
 
