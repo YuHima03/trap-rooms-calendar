@@ -27,4 +27,4 @@ tasks:
       PROJECT_DIR: "./backend/RoomsCalendar.Server"
     cmds:
       - dotnet clean -v quiet
-      - dotnet run --project {{.PROJECT_DIR}} -c Debug -lp http
+      - dotnet run --project {{.PROJECT_DIR}} -c Debug -lp https
