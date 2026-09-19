@@ -28,9 +28,11 @@ public class Program
         _ = builder.Services.AddGrpc();
         _ = builder.Services.AddControllers();
 
+        _ = builder.Services.AddAntiforgery();
+
         // Razor (View)
-        _ = builder.Services.AddRazorComponents()
-            .AddInteractiveWebAssemblyComponents();
+        // _ = builder.Services.AddRazorComponents()
+        //     .AddInteractiveWebAssemblyComponents();
 
         var app = builder.Build();
         var logger = app.Services.GetRequiredService<ILogger<Program>>();
@@ -193,16 +195,21 @@ public class Program
         app.UseAntiforgery();
 
         // gRPC endpoints
-        app.MapGrpcService<Handlers.EventGrpcService>();
-        app.MapGrpcService<Handlers.RoomGrpcService>();
+        app.UseGrpcWeb();
+        app.MapGrpcService<Handlers.EventGrpcService>().EnableGrpcWeb();
+        app.MapGrpcService<Handlers.RoomCalendarGrpcService>().EnableGrpcWeb();
+        app.MapGrpcService<Handlers.RoomGrpcService>().EnableGrpcWeb();
+        app.MapGrpcService<Handlers.UserGrpcService>().EnableGrpcWeb();
 
         // HTTP API endpoints
         var handler = new Handlers.Handler();
         handler.MapHandlers(app);
 
+        app.UseDefaultFiles();
         app.MapStaticAssets();
-        app.MapRazorComponents<Client.App>()
-            .AddInteractiveWebAssemblyRenderMode();
+        app.MapFallbackToFile("/index.html");
+        // app.MapRazorComponents<Client.App>()
+        //     .AddInteractiveWebAssemblyRenderMode();
     }
 #pragma warning restore IDE0058 // Computed value is never used
 }

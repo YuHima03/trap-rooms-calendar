@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package room.v1;
 
+option csharp_namespace = "RoomsCalendar.Server.Protos.Room.V1";
+
 service RoomCalendarService {
   // Retrieve or create a room calendar URL for the logged-in user.
   rpc GetOrCreateRoomCalendarUrl(GetOrCreateRoomCalendarUrlRequest) returns (GetOrCreateRoomCalendarUrlResponse);

@@ -11,6 +11,10 @@
     <BuildCommand>pnpm run build</BuildCommand>
     <BuildOutputFolder>$(MSBuildProjectDirectory)\out</BuildOutputFolder>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' != 'Release'">
+    <!-- Disable build script for Debug configuration -->
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+  </PropertyGroup>
 
   <Target Name="PnpmInstall" BeforeTargets="PreBuildEvent">
     <Exec Command="pnpm install" />

@@ -8,7 +8,6 @@ export default function HomePage() {
         <h2>今後の進捗部屋</h2>
       </div>
       <Schedule />
-      <ApiInformation />
     </>
   );
 }

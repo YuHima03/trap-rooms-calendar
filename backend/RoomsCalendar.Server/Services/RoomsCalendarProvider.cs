@@ -48,7 +48,7 @@ namespace RoomsCalendar.Server.Services
             }
         }
 
-        string GetIcalStringCore(IEnumerable<Room> rooms)
+        string GetIcalStringCore(IEnumerable<Share.Domain.Room> rooms)
         {
             var timeZoneInfo = calendarTimeZone ?? TimeZoneInfo.Utc;
             Ical.Net.Calendar calendar = new()
@@ -74,7 +74,7 @@ namespace RoomsCalendar.Server.Services
             }
         }
 
-        ValueTask<Room[]> GetRoomsAsync(CancellationToken ct = default)
+        ValueTask<Share.Domain.Room[]> GetRoomsAsync(CancellationToken ct = default)
         {
             var timeZoneInfo = calendarTimeZone ?? TimeZoneInfo.Utc;
             DateTimeOffset timeFrom = TimeZoneInfo.ConvertTimeToUtc(

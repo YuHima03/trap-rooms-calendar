@@ -7,21 +7,21 @@ namespace RoomsCalendar.Server.Services
 {
     sealed class RoomsProvider(string providerName) : IRoomsProvider
     {
-        readonly List<Room> _rooms = [];
+        readonly List<Share.Domain.Room> _rooms = [];
 
         public DateTimeOffset LastUpdatedAt { get; private set; }
 
         public string ProviderName { get; } = providerName;
 
-        public ValueTask<Room[]> GetRoomsAsync(DateTimeOffset since, DateTimeOffset until, CancellationToken ct)
+        public ValueTask<Share.Domain.Room[]> GetRoomsAsync(DateTimeOffset since, DateTimeOffset until, CancellationToken ct)
         {
             lock (_rooms)
             {
                 var rooms = CollectionsMarshal.AsSpan(_rooms);
-                var idxStart = BinarySearch.LowerBound<Room, DateTimeOffset>(rooms, since, RoomsExtensions.CompareAvailableUntil);
+                var idxStart = BinarySearch.LowerBound(rooms, since, RoomsExtensions.CompareAvailableUntil);
                 if (idxStart == -1)
                 {
-                    return ValueTask.FromResult(Array.Empty<Room>());
+                    return ValueTask.FromResult(Array.Empty<Share.Domain.Room>());
                 }
                 return ValueTask.FromResult(rooms[idxStart..]
                     .AsValueEnumerable()
@@ -31,11 +31,11 @@ namespace RoomsCalendar.Server.Services
             }
         }
 
-        public ValueTask UpdateRoomsAsync(ReadOnlySpan<Room> rooms, DateTimeOffset since, CancellationToken ct)
+        public ValueTask UpdateRoomsAsync(ReadOnlySpan<Share.Domain.Room> rooms, DateTimeOffset since, CancellationToken ct)
         {
             lock (_rooms)
             {
-                var idx = BinarySearch.LowerBound<Room, DateTimeOffset>(CollectionsMarshal.AsSpan(_rooms), since, RoomsExtensions.CompareAvailableUntil);
+                var idx = BinarySearch.LowerBound(CollectionsMarshal.AsSpan(_rooms), since, RoomsExtensions.CompareAvailableUntil);
                 if (idx == 0)
                 {
                     _rooms.Clear();
@@ -51,20 +51,20 @@ namespace RoomsCalendar.Server.Services
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask UpdateRoomsAsync<TRooms>(TRooms rooms, DateTimeOffset since, CancellationToken ct) where TRooms : IEnumerable<Room>
+        public ValueTask UpdateRoomsAsync<TRooms>(TRooms rooms, DateTimeOffset since, CancellationToken ct) where TRooms : IEnumerable<Share.Domain.Room>
         {
             switch (rooms)
             {
-                case Room[] array:
+                case Share.Domain.Room[] array:
                     return UpdateRoomsAsync(array.AsSpan(), since, ct);
-                case List<Room> list:
+                case List<Share.Domain.Room> list:
                     return UpdateRoomsAsync(CollectionsMarshal.AsSpan(list), since, ct);
-                case ArraySegment<Room> arraySegment:
+                case ArraySegment<Share.Domain.Room> arraySegment:
                     return UpdateRoomsAsync(arraySegment.AsSpan(), since, ct);
             }
             lock (_rooms)
             {
-                var idx = BinarySearch.LowerBound<Room, DateTimeOffset>(CollectionsMarshal.AsSpan(_rooms), since, RoomsExtensions.CompareAvailableUntil);
+                var idx = BinarySearch.LowerBound(CollectionsMarshal.AsSpan(_rooms), since, RoomsExtensions.CompareAvailableUntil);
                 if (idx == 0)
                 {
                     _rooms.Clear();

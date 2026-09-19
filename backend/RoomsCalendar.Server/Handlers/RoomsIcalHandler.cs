@@ -60,5 +60,10 @@ namespace RoomsCalendar.Server.Handlers
             builder.MapGet("rooms/ical/{id:required}/{token:required}", GetRoomsIcalAsync)
                 .AllowAnonymous();
         }
+
+        public static string GetRoomsIcalUrl(Guid id, string token)
+        {
+            return $"/api/rooms/ical/{id:N}/{token}";
+        }
     }
 }

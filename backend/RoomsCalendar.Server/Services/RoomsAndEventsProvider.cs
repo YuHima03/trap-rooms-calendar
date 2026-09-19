@@ -9,7 +9,7 @@ namespace RoomsCalendar.Server.Services
     sealed class RoomsAndEventsProvider : IEventsProvider, IRoomsProvider
     {
         readonly List<Event> _events = [];
-        readonly List<Room> _rooms = [];
+        readonly List<Share.Domain.Room> _rooms = [];
 
         public DateTimeOffset LastUpdatedAt { get; private set; }
 
@@ -33,15 +33,15 @@ namespace RoomsCalendar.Server.Services
             }
         }
 
-        public ValueTask<Room[]> GetRoomsAsync(DateTimeOffset since, DateTimeOffset until, CancellationToken ct)
+        public ValueTask<Share.Domain.Room[]> GetRoomsAsync(DateTimeOffset since, DateTimeOffset until, CancellationToken ct)
         {
             lock (_rooms)
             {
                 var rooms = CollectionsMarshal.AsSpan(_rooms);
-                var idxStart = BinarySearch.LowerBound<Room, DateTimeOffset>(rooms, since, RoomsExtensions.CompareAvailableUntil);
+                var idxStart = BinarySearch.LowerBound(rooms, since, RoomsExtensions.CompareAvailableUntil);
                 if (idxStart == -1)
                 {
-                    return ValueTask.FromResult(Array.Empty<Room>());
+                    return ValueTask.FromResult(Array.Empty<Share.Domain.Room>());
                 }
                 return ValueTask.FromResult(rooms[idxStart..]
                     .AsValueEnumerable()
@@ -71,11 +71,11 @@ namespace RoomsCalendar.Server.Services
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask UpdateRoomsAsync(ReadOnlySpan<Room> rooms, DateTimeOffset since, CancellationToken ct)
+        public ValueTask UpdateRoomsAsync(ReadOnlySpan<Share.Domain.Room> rooms, DateTimeOffset since, CancellationToken ct)
         {
             lock (_rooms)
             {
-                var idx = BinarySearch.LowerBound<Room, DateTimeOffset>(CollectionsMarshal.AsSpan(_rooms), since, RoomsExtensions.CompareAvailableUntil);
+                var idx = BinarySearch.LowerBound(CollectionsMarshal.AsSpan(_rooms), since, RoomsExtensions.CompareAvailableUntil);
                 if (idx == 0)
                 {
                     _rooms.Clear();
@@ -91,11 +91,11 @@ namespace RoomsCalendar.Server.Services
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask UpdateRoomsAsync<TRooms>(TRooms rooms, DateTimeOffset since, CancellationToken ct) where TRooms : IEnumerable<Room>
+        public ValueTask UpdateRoomsAsync<TRooms>(TRooms rooms, DateTimeOffset since, CancellationToken ct) where TRooms : IEnumerable<Share.Domain.Room>
         {
             lock (_rooms)
             {
-                var idx = BinarySearch.LowerBound<Room, DateTimeOffset>(CollectionsMarshal.AsSpan(_rooms), since, RoomsExtensions.CompareAvailableUntil);
+                var idx = BinarySearch.LowerBound(CollectionsMarshal.AsSpan(_rooms), since, RoomsExtensions.CompareAvailableUntil);
                 if (idx == 0)
                 {
                     _rooms.Clear();
@@ -129,26 +129,26 @@ namespace RoomsCalendar.Server.Services
 
     static class RoomsExtensions
     {
-        public static readonly Comparer<Room> AvailableSinceComparer = Comparer<Room>.Create(CompareToAvailableSince);
+        public static readonly Comparer<Share.Domain.Room> AvailableSinceComparer = Comparer<Share.Domain.Room>.Create(CompareToAvailableSince);
 
-        public static int CompareToAvailableSince(this Room room, Room other)
+        public static int CompareToAvailableSince(this Share.Domain.Room room, Share.Domain.Room other)
         {
             return room.AvailableSince.CompareTo(other.AvailableSince);
         }
 
-        public static int CompareToAvailableUntil(this Room room, Room other)
+        public static int CompareToAvailableUntil(this Share.Domain.Room room, Share.Domain.Room other)
         {
             return room.AvailableUntil.CompareTo(other.AvailableUntil);
         }
 
-        public static int CompareAvailableUntil(this Room room, DateTimeOffset since)
+        public static int CompareAvailableUntil(this Share.Domain.Room room, DateTimeOffset since)
         {
             return room.AvailableUntil.CompareTo(since);
         }
 
-        public static Room ToRoom(this Knoq.Models.ResponseRoom room)
+        public static Share.Domain.Room ToRoom(this Knoq.Models.ResponseRoom room)
         {
-            return new Room(
+            return new Share.Domain.Room(
                 room.Place ?? "",
                 DateTimeOffset.Parse(room.TimeStart ?? ""),
                 DateTimeOffset.Parse(room.TimeEnd ?? "")
