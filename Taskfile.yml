@@ -23,8 +23,15 @@ tasks:
   run:
     summary: Run the application in development mode
     dir: .
+    cmds:
+      - pnpm exec nx run-many -t=dev
+
+  publish:
+    summary: Publish the application for production
+    dir: .
     vars:
       PROJECT_DIR: "./backend/RoomsCalendar.Server"
+      PUBLISH_DIR: "./publish"
     cmds:
       - dotnet clean -v quiet
-      - dotnet run --project {{.PROJECT_DIR}} -c Debug -lp https
+      - dotnet publish {{.PROJECT_DIR}} -c Release -o {{.PUBLISH_DIR}}

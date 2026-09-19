@@ -1,4 +1,7 @@
 packages:
+  - frontend
+  - backend
   - proto
 allowBuilds:
   '@bufbuild/buf': false
+  nx: false

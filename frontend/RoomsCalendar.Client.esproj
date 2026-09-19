@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.6165494">
+
+  <PropertyGroup>
+    <StartupCommand>pnpm run dev</StartupCommand>
+    <!-- This project uses pnpm for package management -->
+    <ShouldRunNpmInstall>false</ShouldRunNpmInstall>
+  </PropertyGroup>
+
+  <!-- Build settings -->
+  <PropertyGroup>
+    <BuildCommand>pnpm run build</BuildCommand>
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\out</BuildOutputFolder>
+  </PropertyGroup>
+
+  <Target Name="PnpmInstall" BeforeTargets="PreBuildEvent">
+    <Exec Command="pnpm install" />
+  </Target>
+
+  <!-- Test settings -->
+  <PropertyGroup>
+    <TestCommand>pnpm run test</TestCommand>
+    <JavaScriptTestFramework>Vitest</JavaScriptTestFramework>
+  </PropertyGroup>
+  
+</Project>

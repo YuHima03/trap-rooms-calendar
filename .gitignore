@@ -409,3 +409,9 @@ src/RoomsCalendar.Client/wwwroot/css/app.css
 
 # Mounted db files
 db/mysql
+
+
+
+.nx/cache
+.nx/workspace-data
+.nx/migrate-runs
