@@ -1,0 +1,19 @@
+{
+  "name": "trap-rooms-calendar",
+  "version": "1.0.0",
+  "keywords": [],
+  "author": "Yusuke Toyoda",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.4.2",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.4.2",
+  "type": "module",
+  "devDependencies": {
+    "@bufbuild/buf": "^1.73.0"
+  }
+}

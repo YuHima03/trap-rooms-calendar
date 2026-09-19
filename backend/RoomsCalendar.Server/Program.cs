@@ -25,6 +25,7 @@ public class Program
         ConfigureCalendarServices(builder.Services, builder.Configuration);
 
         // API controllers
+        _ = builder.Services.AddGrpc();
         _ = builder.Services.AddControllers();
 
         // Razor (View)
@@ -46,20 +47,12 @@ public class Program
 
     static void LoadConfigurationFromEnvFiles(ConfigurationManager config)
     {
-        const string EnvFilesKey = "env-files";
-        const char EnvFilesSeparator = ';';
+        const string DefaultEnvFileName = ".env";
 
-        if (config.GetValue<string>(EnvFilesKey) is string envFiles && !string.IsNullOrWhiteSpace(envFiles))
+        if (File.Exists(DefaultEnvFileName))
         {
-            foreach (var path in envFiles.Split(EnvFilesSeparator))
-            {
-                if (!File.Exists(path))
-                {
-                    Console.Error.WriteLine("Environment file not found: {0}", Path.GetFullPath(path));
-                    break;
-                }
-                _ = config.AddIniStream(File.OpenRead(path));
-            }
+            _ = config.AddIniStream(File.OpenRead(DefaultEnvFileName));
+            Console.WriteLine($"Loaded configuration from {DefaultEnvFileName}");
         }
     }
 
@@ -199,6 +192,11 @@ public class Program
 
         app.UseAntiforgery();
 
+        // gRPC endpoints
+        app.MapGrpcService<Handlers.EventGrpcService>();
+        app.MapGrpcService<Handlers.RoomGrpcService>();
+
+        // HTTP API endpoints
         var handler = new Handlers.Handler();
         handler.MapHandlers(app);
 
