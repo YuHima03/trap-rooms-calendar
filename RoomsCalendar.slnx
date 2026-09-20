@@ -1,6 +1,5 @@
 <Solution>
   <Folder Name="/backend/">
-    <Project Path="backend/RoomsCalendar.Client/RoomsCalendar.Client.csproj" />
     <Project Path="backend/RoomsCalendar.Infrastructure/RoomsCalendar.Infrastructure.csproj" />
     <Project Path="backend/RoomsCalendar.Server/RoomsCalendar.Server.csproj" />
     <Project Path="backend/RoomsCalendar.Share/RoomsCalendar.Share.csproj" />
