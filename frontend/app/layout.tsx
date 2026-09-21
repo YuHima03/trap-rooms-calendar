@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Header } from "@/components/layout/header";
 import { AuthProvider } from "@/features/auth/auth-provider";
+import { materialSymbolsStylesheetUrl } from "@/lib/material-symbols";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,10 +23,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
-        />
+        <link rel="stylesheet" href={materialSymbolsStylesheetUrl} />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap"

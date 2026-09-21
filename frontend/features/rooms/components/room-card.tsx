@@ -1,5 +1,6 @@
 import type { Event } from "proto/event/v1/event_pb";
 import { Fragment } from "react";
+import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { type RoomGroup, roomState, validPeriod } from "../lib/room-view";
 import { formatPeriod } from "../lib/time";
 
@@ -38,22 +39,12 @@ export function RoomCard({
         </span>
         {state.occupied ? (
           <span className="flex flex-row flex-nowrap gap-x-1 items-center tx-body2-strong text-dangerous-primary">
-            <span
-              className="material-symbols-rounded text-sm!"
-              aria-hidden="true"
-            >
-              do_not_disturb_on
-            </span>
+            <MaterialSymbol name="do_not_disturb_on" className="text-sm!" />
             占有中
           </span>
         ) : state.available ? (
           <span className="tx-body2-strong text-teal-600">
-            <span
-              className="material-symbols-rounded text-sm!"
-              aria-hidden="true"
-            >
-              check_circle
-            </span>
+            <MaterialSymbol name="check_circle" className="text-sm!" />
             現在利用可
           </span>
         ) : null}
@@ -99,12 +90,7 @@ export function RoomCard({
                 className="font-medium text-note-primary text-balance underline hover:no-underline"
               >
                 {event.name}
-                <span
-                  className="material-symbols-rounded text-sm!"
-                  aria-hidden="true"
-                >
-                  open_in_new
-                </span>
+                <MaterialSymbol name="open_in_new" className="text-sm!" />
               </a>
             ))}
           </div>

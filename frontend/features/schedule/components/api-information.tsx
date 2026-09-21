@@ -1,13 +1,13 @@
+import { MaterialSymbol } from "@/components/ui/material-symbol";
+
 export function ApiInformation() {
   return (
     <div className="grow flex flex-col gap-y-4 p-4 rounded-xl text-tips-primary bg-tips-primary border-1 border-default-secondary">
       <div className="flex flex-row flex-nowrap gap-x-2 items-center">
-        <span
-          className="select-none material-symbols-rounded text-inherit font-inherit"
-          aria-hidden="true"
-        >
-          lightbulb_2
-        </span>
+        <MaterialSymbol
+          name="lightbulb_2"
+          className="select-none text-inherit font-inherit"
+        />
         <h3 className="tx-body-strong text-inherit">APIについて</h3>
       </div>
       <div className="flex flex-col gap-y-3">
@@ -20,12 +20,7 @@ export function ApiInformation() {
             className="font-medium text-note-primary text-balance underline hover:no-underline"
           >
             <code>/api/rooms</code>
-            <span
-              className="material-symbols-rounded text-sm!"
-              aria-hidden="true"
-            >
-              open_in_new
-            </span>
+            <MaterialSymbol name="open_in_new" className="text-sm!" />
           </a>
           から、イベントの情報は
           <a
@@ -35,12 +30,7 @@ export function ApiInformation() {
             className="font-medium text-note-primary text-balance underline hover:no-underline"
           >
             <code>/api/events</code>
-            <span
-              className="material-symbols-rounded text-sm!"
-              aria-hidden="true"
-            >
-              open_in_new
-            </span>
+            <MaterialSymbol name="open_in_new" className="text-sm!" />
           </a>
           から取得することができます。
         </p>
