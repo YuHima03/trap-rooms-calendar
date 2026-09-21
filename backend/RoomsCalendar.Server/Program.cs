@@ -30,10 +30,6 @@ public class Program
 
         _ = builder.Services.AddAntiforgery();
 
-        // Razor (View)
-        // _ = builder.Services.AddRazorComponents()
-        //     .AddInteractiveWebAssemblyComponents();
-
         var app = builder.Build();
         var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
@@ -97,9 +93,11 @@ public class Program
                 Factory = ct =>
                 {
                     TraqAuthenticationInfo authInfo = new();
-                    authInfo.UseCookieAuthentication(
-                        sp.GetRequiredService<IOptions<TraqClientOptions>>().Value.TraqCookieAuthenticationToken ?? throw new Exception("The cookie token for traQ service is not set."));
-
+                    var traqToken = sp.GetRequiredService<IOptions<TraqClientOptions>>().Value.TraqCookieAuthenticationToken;
+                    if (!string.IsNullOrEmpty(traqToken))
+                    {
+                        authInfo.UseCookieAuthentication(traqToken);
+                    }
                     return KnoqApiClient.CreateClientAsync(
                         authInfo,
                         sp.GetRequiredService<IOptions<KnoqApiClientOptions>>().Value,
@@ -205,11 +203,11 @@ public class Program
         var handler = new Handlers.Handler();
         handler.MapHandlers(app);
 
+        // Static files built by the frontend (Next.js)  
         app.UseDefaultFiles();
+        app.UseStaticFiles();
         app.MapStaticAssets();
         app.MapFallbackToFile("/index.html");
-        // app.MapRazorComponents<Client.App>()
-        //     .AddInteractiveWebAssemblyRenderMode();
     }
 #pragma warning restore IDE0058 // Computed value is never used
 }

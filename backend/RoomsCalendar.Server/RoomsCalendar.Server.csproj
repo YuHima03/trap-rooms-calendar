@@ -25,9 +25,6 @@
   <ItemGroup>
     <ProjectReference Include="..\RoomsCalendar.Infrastructure\RoomsCalendar.Infrastructure.csproj" />
     <ProjectReference Include="..\RoomsCalendar.Share\RoomsCalendar.Share.csproj" />
-    <ProjectReference Include="..\..\frontend\RoomsCalendar.Client.esproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

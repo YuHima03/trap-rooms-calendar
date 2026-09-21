@@ -3,6 +3,8 @@
 **/.env
 **/.git
 **/.gitignore
+**/.next
+**/.nx
 **/.project
 **/.settings
 **/.toolstarget
@@ -21,10 +23,15 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+**/AGENTS.md
+**/CLAUDE.md
+**/README.md
 LICENSE
-README.md
 !**/.gitignore
 !.git/HEAD
 !.git/config
 !.git/packed-refs
 !.git/refs/heads/**
+
+frontend/out
+proto/gen

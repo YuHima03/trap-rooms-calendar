@@ -4,6 +4,8 @@
     <StartupCommand>pnpm run dev</StartupCommand>
     <!-- This project uses pnpm for package management -->
     <ShouldRunNpmInstall>false</ShouldRunNpmInstall>
+    <!-- Allow custom build scripts defined in package.json -->
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
   </PropertyGroup>
 
   <!-- Build settings -->
@@ -11,14 +13,6 @@
     <BuildCommand>pnpm run build</BuildCommand>
     <BuildOutputFolder>$(MSBuildProjectDirectory)\out</BuildOutputFolder>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' != 'Release'">
-    <!-- Disable build script for Debug configuration -->
-    <ShouldRunBuildScript>false</ShouldRunBuildScript>
-  </PropertyGroup>
-
-  <Target Name="PnpmInstall" BeforeTargets="PreBuildEvent">
-    <Exec Command="pnpm install" />
-  </Target>
 
   <!-- Test settings -->
   <PropertyGroup>
