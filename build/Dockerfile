@@ -43,4 +43,5 @@ FROM runtime AS final
 WORKDIR /app
 COPY --from=backend /publish/ .
 COPY --from=frontend /src/frontend/out/ wwwroot/
+USER $APP_UID
 ENTRYPOINT ["dotnet", "RoomsCalendar.Server.dll"]
