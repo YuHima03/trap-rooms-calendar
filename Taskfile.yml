@@ -1,18 +1,8 @@
 version: 3
 
 tasks:
-  tailwind-gen:
-    dir: ./src/RoomsCalendar.Client
-    cmds:
-      - npx @tailwindcss/cli -i "./Styles/app.css" -o "./wwwroot/css/app.css"
-
-  tailwind-watch:
-    dir: ./src/RoomsCalendar.Client
-    cmds:
-      - npx @tailwindcss/cli -i "./Styles/app.css" -o "./wwwroot/css/app.css" --watch
-
   build:
-    summary: Build the application
+    desc: Build the application
     dir: .
     vars:
       PROJECT_DIR: "./backend/RoomsCalendar.Server"
@@ -20,11 +10,37 @@ tasks:
       - dotnet clean -v quiet
       - dotnet build -c Debug {{.PROJECT_DIR}}
 
-  run:
-    summary: Run the application in development mode
+  container:run:
+    desc: Run the application in a containerized environment
     dir: .
     vars:
-      PROJECT_DIR: "./backend/RoomsCalendar.Server"
+      COMPOSE_FILE: "build/docker-compose.yml"
+      ENV_FILE: "build/.env.dev"
     cmds:
-      - dotnet clean -v quiet
-      - dotnet run --project {{.PROJECT_DIR}} -c Debug -lp https
+      - defer:
+          task: container:stop
+      - docker compose -f {{.COMPOSE_FILE}} --env-file {{.ENV_FILE}} up --build --abort-on-container-exit
+
+  container:start:
+    desc: Start the containerized application
+    dir: .
+    vars:
+      COMPOSE_FILE: "build/docker-compose.yml"
+      ENV_FILE: "build/.env.dev"
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} --env-file {{.ENV_FILE}} up -d
+
+  container:stop:
+    desc: Stop the containerized application
+    dir: .
+    vars:
+      COMPOSE_FILE: "build/docker-compose.yml"
+      ENV_FILE: "build/.env.dev"
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} --env-file {{.ENV_FILE}} down
+
+  run:
+    desc: Run the application in development mode
+    dir: .
+    cmds:
+      - pnpm exec nx run-many -t=dev

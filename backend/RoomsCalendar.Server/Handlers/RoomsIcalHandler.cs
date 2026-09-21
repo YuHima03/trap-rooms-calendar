@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RoomsCalendar.Infrastructure.Repository;
 using RoomsCalendar.Server.Services;
 using RoomsCalendar.Share.Domain.Repository;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace RoomsCalendar.Server.Handlers
@@ -59,6 +60,38 @@ namespace RoomsCalendar.Server.Handlers
         {
             builder.MapGet("rooms/ical/{id:required}/{token:required}", GetRoomsIcalAsync)
                 .AllowAnonymous();
+        }
+
+        const string RoomsIcalUrlPrefix = "/api/rooms/ical/";
+
+        public static string GetRoomsIcalUrl(Guid id, string token)
+        {
+            return $"{RoomsIcalUrlPrefix}{id:N}/{token}";
+        }
+
+        public static bool TryParseRoomsIcalUrl([NotNullWhen(true)] string? url, out (Guid Id, string Token) result)
+        {
+            if (string.IsNullOrEmpty(url) || !url.StartsWith(RoomsIcalUrlPrefix))
+            {
+                result = default;
+                return false;
+            }
+            var trimmed = url.AsSpan(RoomsIcalUrlPrefix.Length);
+            var slashIndex = trimmed.IndexOf('/');
+            if (slashIndex < 0)
+            {
+                result = default;
+                return false;
+            }
+            var guidSpan = trimmed[..slashIndex];
+            var tokenSpan = trimmed[(slashIndex + 1)..];
+            if (!Guid.TryParseExact(guidSpan, "N", out var guid) || tokenSpan.IsEmpty)
+            {
+                result = default;
+                return false;
+            }
+            result = (guid, tokenSpan.ToString());
+            return true;
         }
     }
 }

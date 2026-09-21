@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>f78a42d4-e4fb-4223-a21e-ddb42f4ff6d4</UserSecretsId>
+
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
@@ -12,23 +13,22 @@
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.4.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.83.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.83.0" />
     <PackageReference Include="Ical.Net" Version="5.1.2" />
     <PackageReference Include="KnoqNet.Extensions.Authentication" Version="1.0.0-alpha.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="SimpleBase" Version="5.6.0" />
     <PackageReference Include="Yuh.Collections" Version="1.0.0-rc.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RoomsCalendar.Infrastructure\RoomsCalendar.Infrastructure.csproj" />
     <ProjectReference Include="..\RoomsCalendar.Share\RoomsCalendar.Share.csproj" />
-    <ProjectReference Include="..\RoomsCalendar.Client\RoomsCalendar.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="../../proto/**/*.proto" Link="Protos/%(RecursiveDir)%(Filename)%(Extension)"
-              Access="internal" GrpcServices="Server"
-              ProtoRoot="../../proto" />
+    <Protobuf Include="..\..\proto\**\*.proto" Link="Protos\%(RecursiveDir)%(Filename)%(Extension)" Access="internal" GrpcServices="Server" ProtoRoot="..\..\proto" />
   </ItemGroup>
   
 </Project>

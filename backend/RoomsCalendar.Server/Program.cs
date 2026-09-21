@@ -28,14 +28,12 @@ public class Program
         _ = builder.Services.AddGrpc();
         _ = builder.Services.AddControllers();
 
-        // Razor (View)
-        _ = builder.Services.AddRazorComponents()
-            .AddInteractiveWebAssemblyComponents();
+        _ = builder.Services.AddAntiforgery();
 
         var app = builder.Build();
         var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-        ConfigureEndpoints(app);
+        ConfigurePipeline(app);
 
         if (logger.IsEnabled(LogLevel.Information))
         {
@@ -95,9 +93,11 @@ public class Program
                 Factory = ct =>
                 {
                     TraqAuthenticationInfo authInfo = new();
-                    authInfo.UseCookieAuthentication(
-                        sp.GetRequiredService<IOptions<TraqClientOptions>>().Value.TraqCookieAuthenticationToken ?? throw new Exception("The cookie token for traQ service is not set."));
-
+                    var traqToken = sp.GetRequiredService<IOptions<TraqClientOptions>>().Value.TraqCookieAuthenticationToken;
+                    if (!string.IsNullOrEmpty(traqToken))
+                    {
+                        authInfo.UseCookieAuthentication(traqToken);
+                    }
                     return KnoqApiClient.CreateClientAsync(
                         authInfo,
                         sp.GetRequiredService<IOptions<KnoqApiClientOptions>>().Value,
@@ -175,34 +175,65 @@ public class Program
         _ = services.AddSingleton(timezone);
     }
 
-    static void ConfigureEndpoints(WebApplication app)
+    /// <summary>
+    /// Configures the HTTP request pipeline and maps endpoints for gRPC services, HTTP API controllers, and static files.
+    /// </summary>
+    /// <param name="app"></param>
+    static void ConfigurePipeline(WebApplication app)
 #pragma warning disable IDE0058 // Computed value is never used
     {
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseWebAssemblyDebugging();
         }
         else
         {
+            // 0. exception handler (top of the pipeline)
             app.UseExceptionHandler("/Error");
         }
 
+        // 1. http -> https
         app.UseHttpsRedirection();
 
+        // 2. static files handler (wwwroot)
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+
+        // 3. routing
+        app.UseRouting();
+        app.UseGrpcWeb();
+
+        // 4. authentication & authorization
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        // 5. anti-forgery
         app.UseAntiforgery();
 
-        // gRPC endpoints
-        app.MapGrpcService<Handlers.EventGrpcService>();
-        app.MapGrpcService<Handlers.RoomGrpcService>();
+        // 6. map endpoints
+        {
+            // gRPC endpoints
+            var grpcGroup = app.MapGroup("")
+                .RequireAuthorization()
+                .EnableGrpcWeb();
+            grpcGroup.MapGrpcService<Handlers.EventGrpcService>();
+            grpcGroup.MapGrpcService<Handlers.RoomCalendarGrpcService>();
+            grpcGroup.MapGrpcService<Handlers.RoomGrpcService>();
+            grpcGroup.MapGrpcService<Handlers.UserGrpcService>();
 
-        // HTTP API endpoints
-        var handler = new Handlers.Handler();
-        handler.MapHandlers(app);
+            // HTTP API endpoints
+            var handler = new Handlers.Handler();
+            handler.MapHandlers(app);
 
-        app.MapStaticAssets();
-        app.MapRazorComponents<Client.App>()
-            .AddInteractiveWebAssemblyRenderMode();
+            // Static files built by the frontend (Next.js)  
+            app.MapStaticAssets();
+
+            // Fallback when no other endpoints match
+            app.MapFallbackToFile("/404.html", new StaticFileOptions
+            {
+                OnPrepareResponse = ctx => { ctx.Context.Response.StatusCode = StatusCodes.Status404NotFound; }
+            });
+        }
     }
 #pragma warning restore IDE0058 // Computed value is never used
 }

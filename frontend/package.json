@@ -1,0 +1,39 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "author": "Yusuke Toyoda",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -w generate:api && next dev",
+    "build": "pnpm -w generate:api && next build",
+    "typecheck": "pnpm -w generate:api && next typegen && tsc --noEmit",
+    "test": "pnpm -w generate:api && vitest run",
+    "lint": "biome check",
+    "format": "biome format --write"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.15.0",
+    "@connectrpc/connect": "^2.2.0",
+    "@connectrpc/connect-web": "^2.2.0",
+    "next": "16.3.5",
+    "proto": "workspace:*",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.2",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^24.13.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "jsdom": "^30.1.0",
+    "nx": "23.2.1",
+    "tailwindcss": "^4.3",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
+  },
+  "nx": {}
+}

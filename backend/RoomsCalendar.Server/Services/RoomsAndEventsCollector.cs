@@ -230,9 +230,9 @@ namespace RoomsCalendar.Server.Services
             );
         }
 
-        public static Room KnoqRoomToDomainRoom(this KnoqRoom room)
+        public static Share.Domain.Room KnoqRoomToDomainRoom(this KnoqRoom room)
         {
-            return new Room(
+            return new Share.Domain.Room(
                 room.Place,
                 room.StartsAt,
                 room.EndsAt

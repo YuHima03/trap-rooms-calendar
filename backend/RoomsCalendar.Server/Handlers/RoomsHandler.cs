@@ -8,9 +8,9 @@ namespace RoomsCalendar.Server.Handlers
     public class RoomsHandler
     {
         [HttpGet]
-        [ProducesResponseType<Room[]>(StatusCodes.Status200OK)]
+        [ProducesResponseType<Share.Domain.Room[]>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        async ValueTask<Results<Ok<Room[]>, BadRequest<string>>> GetRoomsAsync(
+        async ValueTask<Results<Ok<Share.Domain.Room[]>, BadRequest<string>>> GetRoomsAsync(
             HttpContext ctx,
             [FromKeyedServices(RoomsProviderNames.KnoqRegistered)] IRoomsProvider roomsProvider,
             [FromQuery(Name = "since")] DateTimeOffset? since = null,

@@ -67,7 +67,7 @@ namespace RoomsCalendar.Server.Services
                 using var rooms = await ParseFetchResultAsync(stream, ct);
                 if (rooms.Size != 0)
                 {
-                    var buffer = ArrayPool<Room>.Shared.Rent(rooms.Size);
+                    var buffer = ArrayPool<Share.Domain.Room>.Shared.Rent(rooms.Size);
                     try
                     {
                         var timeZoneToday = TimeZoneInfo.ConvertTimeToUtc(
@@ -80,18 +80,18 @@ namespace RoomsCalendar.Server.Services
                             .Where(r => r.EventName.AsSpan().EndsWith(MatchEventName, StringComparison.InvariantCultureIgnoreCase))
                             .Select(r => r.ToDomainRoom())
                             .CopyTo(buffer.AsSpan());
-                        await reservedRoomsProvider.UpdateRoomsAsync((ReadOnlySpan<Room>)buffer.AsSpan(0, reservedCnt), timeZoneToday, ct);
+                        await reservedRoomsProvider.UpdateRoomsAsync((ReadOnlySpan<Share.Domain.Room>)buffer.AsSpan(0, reservedCnt), timeZoneToday, ct);
 
                         var vacantCnt = rooms
                             .AsValueEnumerable()
                             .Where(r => string.IsNullOrWhiteSpace(r.EventName))
                             .Select(r => r.ToDomainRoom())
                             .CopyTo(buffer.AsSpan());
-                        await vacantRoomsProvider.UpdateRoomsAsync((ReadOnlySpan<Room>)buffer.AsSpan(0, vacantCnt), timeZoneToday, ct);
+                        await vacantRoomsProvider.UpdateRoomsAsync((ReadOnlySpan<Share.Domain.Room>)buffer.AsSpan(0, vacantCnt), timeZoneToday, ct);
                     }
                     finally
                     {
-                        ArrayPool<Room>.Shared.Return(buffer, true);
+                        ArrayPool<Share.Domain.Room>.Shared.Return(buffer, true);
                     }
                 }
             }
@@ -222,9 +222,9 @@ namespace RoomsCalendar.Server.Services
 
             public DateTimeOffset TimeTo { get; init; }
 
-            public Room ToDomainRoom()
+            public Share.Domain.Room ToDomainRoom()
             {
-                return new Room(PlaceName, TimeFrom, TimeTo);
+                return new Share.Domain.Room(PlaceName, TimeFrom, TimeTo);
             }
         }
     }
