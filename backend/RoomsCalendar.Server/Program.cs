@@ -33,7 +33,7 @@ public class Program
         var app = builder.Build();
         var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-        ConfigureEndpoints(app);
+        ConfigurePipeline(app);
 
         if (logger.IsEnabled(LogLevel.Information))
         {
@@ -175,39 +175,62 @@ public class Program
         _ = services.AddSingleton(timezone);
     }
 
-    static void ConfigureEndpoints(WebApplication app)
+    /// <summary>
+    /// Configures the HTTP request pipeline and maps endpoints for gRPC services, HTTP API controllers, and static files.
+    /// </summary>
+    /// <param name="app"></param>
+    static void ConfigurePipeline(WebApplication app)
 #pragma warning disable IDE0058 // Computed value is never used
     {
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseWebAssemblyDebugging();
         }
         else
         {
+            // 0. exception handler (top of the pipeline)
             app.UseExceptionHandler("/Error");
         }
 
+        // 1. http -> https
         app.UseHttpsRedirection();
 
-        app.UseAntiforgery();
-
-        // gRPC endpoints
-        app.UseGrpcWeb();
-        app.MapGrpcService<Handlers.EventGrpcService>().EnableGrpcWeb();
-        app.MapGrpcService<Handlers.RoomCalendarGrpcService>().EnableGrpcWeb();
-        app.MapGrpcService<Handlers.RoomGrpcService>().EnableGrpcWeb();
-        app.MapGrpcService<Handlers.UserGrpcService>().EnableGrpcWeb();
-
-        // HTTP API endpoints
-        var handler = new Handlers.Handler();
-        handler.MapHandlers(app);
-
-        // Static files built by the frontend (Next.js)  
+        // 2. static files handler (wwwroot)
         app.UseDefaultFiles();
         app.UseStaticFiles();
-        app.MapStaticAssets();
-        app.MapFallbackToFile("/index.html");
+
+        // 3. routing
+        app.UseRouting();
+        app.UseGrpcWeb();
+
+        // 4. authentication & authorization
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        // 5. anti-forgery
+        app.UseAntiforgery();
+
+        // 6. map endpoints
+        {
+            // gRPC endpoints
+            app.MapGrpcService<Handlers.EventGrpcService>().EnableGrpcWeb();
+            app.MapGrpcService<Handlers.RoomCalendarGrpcService>().EnableGrpcWeb();
+            app.MapGrpcService<Handlers.RoomGrpcService>().EnableGrpcWeb();
+            app.MapGrpcService<Handlers.UserGrpcService>().EnableGrpcWeb();
+
+            // HTTP API endpoints
+            var handler = new Handlers.Handler();
+            handler.MapHandlers(app);
+
+            // Static files built by the frontend (Next.js)  
+            app.MapStaticAssets();
+
+            // Fallback when no other endpoints match
+            app.MapFallbackToFile("/404.html", new StaticFileOptions
+            {
+                OnPrepareResponse = ctx => { ctx.Context.Response.StatusCode = StatusCodes.Status404NotFound; }
+            });
+        }
     }
 #pragma warning restore IDE0058 // Computed value is never used
 }

@@ -1,16 +1,6 @@
 version: 3
 
 tasks:
-  tailwind-gen:
-    dir: ./src/RoomsCalendar.Client
-    cmds:
-      - npx @tailwindcss/cli -i "./Styles/app.css" -o "./wwwroot/css/app.css"
-
-  tailwind-watch:
-    dir: ./src/RoomsCalendar.Client
-    cmds:
-      - npx @tailwindcss/cli -i "./Styles/app.css" -o "./wwwroot/css/app.css" --watch
-
   build:
     desc: Build the application
     dir: .
@@ -52,13 +42,3 @@ tasks:
     dir: .
     cmds:
       - pnpm exec nx run-many -t=dev
-
-  publish:
-    desc: Publish the application for production
-    dir: .
-    vars:
-      PROJECT_DIR: "./backend/RoomsCalendar.Server"
-      PUBLISH_DIR: "./publish"
-    cmds:
-      - dotnet clean -v quiet
-      - dotnet publish {{.PROJECT_DIR}} -c Release -o {{.PUBLISH_DIR}}
