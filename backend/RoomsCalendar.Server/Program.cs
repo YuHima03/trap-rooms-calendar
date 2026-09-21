@@ -213,10 +213,13 @@ public class Program
         // 6. map endpoints
         {
             // gRPC endpoints
-            app.MapGrpcService<Handlers.EventGrpcService>().EnableGrpcWeb();
-            app.MapGrpcService<Handlers.RoomCalendarGrpcService>().EnableGrpcWeb();
-            app.MapGrpcService<Handlers.RoomGrpcService>().EnableGrpcWeb();
-            app.MapGrpcService<Handlers.UserGrpcService>().EnableGrpcWeb();
+            var grpcGroup = app.MapGroup("")
+                .RequireAuthorization()
+                .EnableGrpcWeb();
+            grpcGroup.MapGrpcService<Handlers.EventGrpcService>();
+            grpcGroup.MapGrpcService<Handlers.RoomCalendarGrpcService>();
+            grpcGroup.MapGrpcService<Handlers.RoomGrpcService>();
+            grpcGroup.MapGrpcService<Handlers.UserGrpcService>();
 
             // HTTP API endpoints
             var handler = new Handlers.Handler();
