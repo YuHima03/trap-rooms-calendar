@@ -10,18 +10,15 @@ FROM node:26-slim AS frontend
 RUN --mount=type=cache,target=/root/.npm \
     npm install -g pnpm@12.4.2
 WORKDIR /src
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY frontend/package.json frontend/package.json
+COPY proto/package.json proto/package.json
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --store-dir=/pnpm/store
 COPY frontend/ frontend/
 COPY proto/ proto/
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
-    --mount=type=bind,source=pnpm-workspace.yaml,target=pnpm-workspace.yaml \
-    pnpm install --frozen-lockfile
 # Exported static files will be placed in `/src/frontend/out` directory.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
-    --mount=type=bind,source=pnpm-workspace.yaml,target=pnpm-workspace.yaml \
-    --mount=type=bind,source=buf.yaml,target=buf.yaml \
+RUN --mount=type=bind,source=buf.yaml,target=buf.yaml \
     --mount=type=bind,source=buf.gen.yaml,target=buf.gen.yaml \
     pnpm --filter frontend build
 
