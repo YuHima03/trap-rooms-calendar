@@ -1,8 +1,10 @@
+using System.Collections.Frozen;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using RoomsCalendar.Server.Protos.Room.V1;
 using RoomsCalendar.Share.Constants;
 using RoomsCalendar.Share.Domain;
+using RoomsCalendar.Share.Usecase;
 
 namespace RoomsCalendar.Server.Handlers;
 
@@ -13,19 +15,27 @@ sealed class RoomGrpcService(
     )
     : RoomService.RoomServiceBase
 {
+    static readonly FrozenSet<string>.AlternateLookup<ReadOnlySpan<char>> ReservableRooms = TitechRooms.ReservableRoomNames.GetAlternateLookup<ReadOnlySpan<char>>();
+
     public override async Task<GetReservedRoomsResponse> GetReservedRooms(GetReservedRoomsRequest request, ServerCallContext context)
     {
         var since = request.StartTime?.ToDateTimeOffset() ?? DateTimeOffset.MinValue;
         var until = request.EndTime?.ToDateTimeOffset() ?? DateTimeOffset.MaxValue;
         ThrowIfInvalidTimeRange(since, until);
 
+        var useOfficialDataUntil = DateTimeOffset.UtcNow.AddDays(6); // Use officially reserved rooms instead of knoQ registered rooms for the next 6 days
         // Get all reserved rooms from the different providers
-        var rooms = await AsyncEnumerable.ToAsyncEnumerable([reservedRoomsProviderFromKnoq, reservedRoomsProviderFromTitech])
-            .SelectMany<IRoomsProvider, Room>(async (p, ct) => await p.GetRoomsAsync(since, until, ct))
+        var officiallyReservedRooms = (await reservedRoomsProviderFromTitech.GetRoomsAsync(since, until, context.CancellationToken))
+            .OrderBy(r => r.AvailableUntil)
+            .TakeWhile(r => r.AvailableUntil <= useOfficialDataUntil);
+        var knoqRegisteredRooms = (await reservedRoomsProviderFromKnoq.GetRoomsAsync(since, until, context.CancellationToken))
+            .OrderBy(r => r.AvailableUntil)
+            .SkipWhile(r => r.AvailableUntil <= useOfficialDataUntil);
+
+        var rooms = Enumerable.SelectMany([officiallyReservedRooms, knoqRegisteredRooms], r => r)
             .OrderBy(r => r.AvailableSince)
             .ThenBy(r => r.AvailableUntil)
-            .Distinct()
-            .ToListAsync(context.CancellationToken);
+            .ToList();
         GetReservedRoomsResponse response = new();
         response.ReservedRooms.AddRange(rooms.Select(r => new RoomWithPeriod
         {
@@ -46,17 +56,22 @@ sealed class RoomGrpcService(
         var until = request.EndTime?.ToDateTimeOffset() ?? DateTimeOffset.MaxValue;
         ThrowIfInvalidTimeRange(since, until);
 
-        var rooms = await vacantRoomsProvider.GetRoomsAsync(since, until, context.CancellationToken);
+        var rooms = (await vacantRoomsProvider.GetRoomsAsync(since, until, context.CancellationToken))
+            .Select(r => (WithPeriod: r, Info: new TitechRoomInfo(r.PlaceName)))
+            .Where(r => ReservableRooms.Contains(r.Info.Name))
+            .OrderBy(r => r.Info, TitechRooms.DefaultBuildingComparerForReservation)
+            .ThenBy(r => r.WithPeriod.AvailableSince)
+            .ToList();
         GetVacantRoomsResponse response = new();
         response.VacantRooms.AddRange(rooms.Select(r => new RoomWithPeriod
         {
             Room = new()
             {
-                Id = r.PlaceName,
-                Name = r.PlaceName
+                Id = r.Info.Name.ToString(),
+                Name = r.WithPeriod.PlaceName
             },
-            StartTime = r.AvailableSince.ToTimestamp(),
-            EndTime = r.AvailableUntil.ToTimestamp(),
+            StartTime = r.WithPeriod.AvailableSince.ToTimestamp(),
+            EndTime = r.WithPeriod.AvailableUntil.ToTimestamp(),
         }));
         return response;
     }
