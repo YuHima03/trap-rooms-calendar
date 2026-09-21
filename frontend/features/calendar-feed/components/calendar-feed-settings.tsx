@@ -10,7 +10,7 @@ const loadCalendarUrl = (signal: AbortSignal) =>
 
 export function CalendarFeedSettings() {
   const { data, error, isLoading, refetch } = useRpcQuery(loadCalendarUrl);
-  const [refreshedUrl, setRefreshedUrl] = useState<string>();
+  const [refreshedPath, setRefreshedPath] = useState<string>();
   const [refreshError, setRefreshError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copyNotice, setCopyNotice] = useState<{
@@ -18,12 +18,19 @@ export function CalendarFeedSettings() {
     message: string;
   } | null>(null);
   const refreshRequest = useRef<AbortController | null>(null);
-  const url = refreshedUrl ?? data?.url;
+  const path = refreshedPath ?? data?.url;
+  // The path is loaded after mount, so static rendering never accesses window.
+  const url = path
+    ? new URL(
+        path,
+        process.env.NEXT_PUBLIC_API_BASE_URL || window.location.origin,
+      ).href
+    : undefined;
 
   useEffect(() => () => refreshRequest.current?.abort(), []);
 
   async function refreshUrl() {
-    if (!url || refreshRequest.current) return;
+    if (!path || refreshRequest.current) return;
     if (
       !window.confirm(
         "トークンを再生成すると、これまでの配信URLは使えなくなります。カレンダーアプリへの再登録が必要です。再生成しますか？",
@@ -39,12 +46,12 @@ export function CalendarFeedSettings() {
     setCopyNotice(null);
     try {
       const response = await getRpcClients().calendar.refreshRoomCalendarUrl(
-        { oldUrl: url },
+        { oldUrl: path },
         { signal: controller.signal },
       );
       if (!controller.signal.aborted) {
         if (!response.url) throw new Error("配信URLが取得できませんでした。");
-        setRefreshedUrl(response.url);
+        setRefreshedPath(response.url);
       }
     } catch (cause) {
       if (!controller.signal.aborted) {
@@ -131,7 +138,7 @@ export function CalendarFeedSettings() {
           </div>
           {refreshError && <p role="alert">{refreshError}</p>}
           {copyNotice?.url === url && <output>{copyNotice.message}</output>}
-          {refreshedUrl && !refreshError && !isRefreshing && (
+          {refreshedPath && !refreshError && !isRefreshing && (
             <output>
               トークンを再生成しました。新しいURLを登録してください。
             </output>
