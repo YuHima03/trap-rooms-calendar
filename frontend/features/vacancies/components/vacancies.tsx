@@ -5,8 +5,8 @@ import { RoomCard } from "@/features/rooms/components/room-card";
 import { useRoomClock } from "@/features/rooms/hooks/use-room-clock";
 import { compareVacantRooms, groupRooms } from "@/features/rooms/lib/room-view";
 import { jstDayRange } from "@/features/rooms/lib/time";
-import { getRpcClients } from "@/lib/rpc/clients";
-import { useRpcQuery } from "@/lib/rpc/use-rpc-query";
+import { getRpcClients } from "@/shared/api/rpc/clients";
+import { useRpcQuery } from "@/shared/api/rpc/use-rpc-query";
 
 const loadVacancies = async (signal: AbortSignal) => {
   const { start, end } = jstDayRange(Date.now());

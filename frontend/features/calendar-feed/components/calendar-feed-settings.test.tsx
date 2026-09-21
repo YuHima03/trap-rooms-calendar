@@ -7,7 +7,7 @@ const calendar = vi.hoisted(() => ({
   refreshRoomCalendarUrl: vi.fn(),
 }));
 
-vi.mock("@/lib/rpc/clients", () => ({
+vi.mock("@/shared/api/rpc/clients", () => ({
   getRpcClients: () => ({ calendar }),
 }));
 

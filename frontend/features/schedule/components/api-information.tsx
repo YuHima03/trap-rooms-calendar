@@ -1,4 +1,4 @@
-import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { MaterialSymbol } from "@/shared/ui/material-symbol";
 
 export function ApiInformation() {
   return (

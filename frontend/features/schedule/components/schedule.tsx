@@ -9,8 +9,8 @@ import {
   groupRoomsByDate,
 } from "@/features/rooms/lib/room-view";
 import { dateLabel, jstDateKey, jstDayRange } from "@/features/rooms/lib/time";
-import { getRpcClients } from "@/lib/rpc/clients";
-import { useRpcQuery } from "@/lib/rpc/use-rpc-query";
+import { getRpcClients } from "@/shared/api/rpc/clients";
+import { useRpcQuery } from "@/shared/api/rpc/use-rpc-query";
 
 const loadRooms = async (signal: AbortSignal) =>
   getRpcClients().rooms.getReservedRooms(

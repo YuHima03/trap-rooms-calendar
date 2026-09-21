@@ -1,4 +1,4 @@
-import type { MaterialSymbolName } from "@/lib/material-symbols";
+import type { MaterialSymbolName } from "@/shared/config/material-symbols";
 
 export function MaterialSymbol({
   name,

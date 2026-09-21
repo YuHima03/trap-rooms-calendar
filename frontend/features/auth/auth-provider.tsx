@@ -3,8 +3,8 @@
 import { Code, ConnectError } from "@connectrpc/connect";
 import type { User } from "proto/user/v1/user_pb";
 import { createContext, type ReactNode, useContext } from "react";
-import { getRpcClients } from "@/lib/rpc/clients";
-import { useRpcQuery } from "@/lib/rpc/use-rpc-query";
+import { getRpcClients } from "@/shared/api/rpc/clients";
+import { useRpcQuery } from "@/shared/api/rpc/use-rpc-query";
 
 type AuthResult =
   | { status: "authenticated"; user: User }

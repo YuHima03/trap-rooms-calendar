@@ -1,6 +1,6 @@
 import type { Event } from "proto/event/v1/event_pb";
 import { Fragment } from "react";
-import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { MaterialSymbol } from "@/shared/ui/material-symbol";
 import { type RoomGroup, roomState, validPeriod } from "../lib/room-view";
 import { formatPeriod } from "../lib/time";
 

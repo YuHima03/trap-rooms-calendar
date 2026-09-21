@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthProvider, useCurrentUser } from "./auth-provider";
 
 const getMe = vi.hoisted(() => vi.fn());
-vi.mock("@/lib/rpc/clients", () => ({
+vi.mock("@/shared/api/rpc/clients", () => ({
   getRpcClients: () => ({ user: { getMe } }),
 }));
 

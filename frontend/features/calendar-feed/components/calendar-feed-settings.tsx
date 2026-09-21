@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getRpcClients } from "@/lib/rpc/clients";
-import { getRpcErrorMessage } from "@/lib/rpc/errors";
-import { useRpcQuery } from "@/lib/rpc/use-rpc-query";
+import { getRpcClients } from "@/shared/api/rpc/clients";
+import { getRpcErrorMessage } from "@/shared/api/rpc/errors";
+import { useRpcQuery } from "@/shared/api/rpc/use-rpc-query";
 
 const loadCalendarUrl = (signal: AbortSignal) =>
   getRpcClients().calendar.getOrCreateRoomCalendarUrl({}, { signal });

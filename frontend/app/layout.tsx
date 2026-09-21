@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Header } from "@/components/layout/header";
 import { AuthProvider } from "@/features/auth/auth-provider";
-import { materialSymbolsStylesheetUrl } from "@/lib/material-symbols";
+import { materialSymbolsStylesheetUrl } from "@/shared/config/material-symbols";
+import { Header } from "./_components/header";
 import "./globals.css";
 
 export const metadata: Metadata = {

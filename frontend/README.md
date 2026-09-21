@@ -54,8 +54,10 @@ NEXT_PUBLIC_TRAQ_API_BASE_URL=https://q.trap.jp/api/v3
 - `features/rooms`: 両一覧で共通のカード、JST 日付・期間・イベントの表示処理
 - `features/calendar-feed`: 配信 URL と更新操作
 - `features/auth`: ログインユーザー取得と認証状態
-- `components/layout`: 共通ヘッダー
-- `lib/rpc`: gRPC-Web transport、生成定義からのクライアント構築、取得状態とエラー
+- `app/_components`: 認証状態やナビゲーションを扱う共通ヘッダー
+- `shared/ui`: 特定の機能に依存しない共通 UI
+- `shared/config`: 使用するアイコンの定義とフォント読み込み設定
+- `shared/api/rpc`: gRPC-Web transport、生成定義からのクライアント構築、取得状態とエラー
 - `../proto/gen`: Buf / Protobuf-ES の生成物。手編集・コミットせず各コマンドで再生成
 
 API 型とサービス定義は `proto` workspace パッケージから参照します。
