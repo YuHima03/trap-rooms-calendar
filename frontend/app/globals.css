@@ -102,46 +102,91 @@
   --color-aqua-7: #0e6751;
   --color-aqua-8: #065240;
   --color-aqua-9: #0f3c2f;
-  --color-black: #1d2227;
+  --color-black: #15181b;
   --color-white: #ffffff;
 }
 
-/* Semantic Colors */
+/* 
+  Semantic Colors: --theme-{kind}-{mode}-{level}
+*/
+:root, :root[data-theme="light"] {
+  /* Text */
+  --theme-text-default-primary: var(--color-black);
+  --theme-text-default-secondary: var(--color-gray-7);
+  --theme-text-default-tertiary: var(--color-gray-5);
+  --theme-text-disabled-primary: var(--color-gray-4);
+  --theme-text-inv-primary: var(--color-white);
+  --theme-text-note-primary: var(--color-blue-6);
+  --theme-text-success-primary: var(--color-green-6);
+  --theme-text-warning-primary: var(--color-yellow-6);
+  --theme-text-dangerous-primary: var(--color-red-6);
+  --theme-text-tips-primary: var(--color-aqua-6);
+
+  /* Background */
+  --theme-background-default-primary: var(--color-white);
+  --theme-background-default-secondary: var(--color-gray-0);
+  --theme-background-default-tertiary: var(--color-gray-1);
+  --theme-background-button-primary: var(--color-blue-5);
+  --theme-background-button-secondary: var(--color-blue-6);
+  --theme-background-note-primary: var(--color-blue-0);
+  --theme-background-success-primary: var(--color-green-0);
+  --theme-background-warning-primary: var(--color-yellow-0);
+  --theme-background-dangerous-primary: var(--color-red-0);
+  --theme-background-tips-primary: var(--color-aqua-0);
+  
+  /* Border */
+  --theme-border-default-primary: var(--color-gray-3);
+  --theme-border-default-secondary: var(--color-gray-2);
+  --theme-border-note-primary: var(--color-blue-5);
+  --theme-border-success-primary: var(--color-green-5);
+  --theme-border-dangerous-primary: var(--color-red-5);
+}
+:root[data-theme="dark"] {
+  /* Text */
+  --theme-text-default-primary: var(--color-gray-0);
+  --theme-text-disabled-primary: var(--color-gray-4);
+  --theme-text-note-primary: var(--color-blue-3);
+  --theme-text-warning-primary: var(--color-yellow-2);
+
+  /* Background */
+  --theme-background-default-primary: var(--color-black);
+  --theme-background-default-secondary: var(--color-gray-9);
+  --theme-background-default-tertiary: var(--color-gray-8);
+  --theme-background-warning-primary: var(--color-yellow-8);
+
+  /* Border */
+  --theme-border-default-primary: var(--color-gray-3);
+  --theme-border-default-secondary: var(--color-gray-7);
+}
+
 @theme inline {
-  /*
-    Text
-    */
-  --color-tx-default-primary: var(--color-black);
-  --color-tx-default-secondary: var(--color-gray-7);
-  --color-tx-default-tertiary: var(--color-gray-5);
-  --color-tx-disabled-primary: var(--color-gray-4);
-  --color-tx-inv-primary: var(--color-white);
-  --color-tx-note-primary: var(--color-blue-6);
-  --color-tx-success-primary: var(--color-green-6);
-  --color-tx-warning-primary: var(--color-yellow-6);
-  --color-tx-dangerous-primary: var(--color-red-6);
-  --color-tx-tips-primary: var(--color-aqua-6);
-  /*
-    Background
-    */
-  --color-bg-default-primary: var(--color-white);
-  --color-bg-default-secondary: var(--color-gray-0);
-  --color-bg-default-tertiary: var(--color-gray-1);
-  --color-bg-button-primary: var(--color-blue-5);
-  --color-bg-button-secondary: var(--color-blue-6);
-  --color-bg-note-primary: var(--color-blue-0);
-  --color-bg-success-primary: var(--color-green-0);
-  --color-bg-warning-primary: var(--color-yellow-0);
-  --color-bg-dangerous-primary: var(--color-red-0);
-  --color-bg-tips-primary: var(--color-aqua-0);
-  /*
-    Border
-    */
-  --color-bd-default-primary: var(--color-gray-3);
-  --color-bd-default-secondary: var(--color-gray-2);
-  --color-bd-note-primary: var(--color-blue-5);
-  --color-bd-success-primary: var(--color-green-5);
-  --color-bd-dangerous-primary: var(--color-red-5);
+  --color-tx-default-primary: var(--theme-text-default-primary);
+  --color-tx-default-secondary: var(--theme-text-default-secondary);
+  --color-tx-default-tertiary: var(--theme-text-default-tertiary);
+  --color-tx-disabled-primary: var(--theme-text-disabled-primary);
+  --color-tx-inv-primary: var(--theme-text-inv-primary);
+  --color-tx-note-primary: var(--theme-text-note-primary);
+  --color-tx-success-primary: var(--theme-text-success-primary);
+  --color-tx-warning-primary: var(--theme-text-warning-primary);
+  --color-tx-dangerous-primary: var(--theme-text-dangerous-primary);
+  --color-tx-tips-primary: var(--theme-text-tips-primary);
+
+  --color-bg-default-primary: var(--theme-background-default-primary);
+  --color-bg-default-secondary: var(--theme-background-default-secondary);
+  --color-bg-default-tertiary: var(--theme-background-default-tertiary);
+  --color-bg-button-primary: var(--theme-background-button-primary);
+  --color-bg-button-secondary: var(--theme-background-button-secondary);
+  --color-bg-note-primary: var(--theme-background-note-primary);
+  --color-bg-success-primary: var(--theme-background-success-primary);
+  --color-bg-warning-primary: var(--theme-background-warning-primary);
+  --color-bg-dangerous-primary: var(--theme-background-dangerous-primary);
+  --color-bg-tips-primary: var(--theme-background-tips-primary);
+  
+  --color-bd-default-primary: var(--theme-border-default-primary);
+  --color-bd-default-secondary: var(--theme-border-default-secondary);
+  --color-bd-note-primary: var(--theme-border-note-primary);
+  --color-bd-success-primary: var(--theme-border-success-primary);
+  --color-bd-dangerous-primary: var(--theme-border-dangerous-primary);
 }
 
 @theme {
@@ -187,6 +232,7 @@
 @layer base {
   :root {
     @apply tx-body;
+    @apply bg-default-primary;
     @apply box-border;
   }
   h1 {

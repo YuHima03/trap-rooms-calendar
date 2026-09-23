@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { AuthProvider } from "@/features/auth/auth-provider";
 import { materialSymbolsStylesheetUrl } from "@/shared/config/material-symbols";
-import { Header } from "./_components/header";
 import "./globals.css";
+import { AuthProvider } from "@/features/auth/auth-provider";
+import { Header } from "./_components/header";
+import { ThemeProvider } from "@/shared/ui/theme";
 
 export const metadata: Metadata = {
   title: {
@@ -17,26 +18,36 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link rel="stylesheet" href={materialSymbolsStylesheetUrl} />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap"
-        />
+        <HeadImports />
       </head>
       <body>
-        <AuthProvider>
-          <Header />
-          <main className="flex flex-col gap-y-6 p-6 mx-auto max-w-5xl">
-            {children}
-          </main>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Header />
+            <main className="flex flex-col gap-y-6 p-6 mx-auto max-w-5xl">
+              {children}
+            </main>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
+}
+
+function HeadImports() {
+  return (
+    <>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossOrigin="anonymous"
+      />
+      <link rel="stylesheet" href={materialSymbolsStylesheetUrl} />
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap"
+      />
+    </>
+  )
 }
