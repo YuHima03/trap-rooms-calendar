@@ -4,7 +4,7 @@ import { materialSymbolsStylesheetUrl } from "@/shared/config/material-symbols";
 import "./globals.css";
 import { AuthProvider } from "@/features/auth/auth-provider";
 import { Header } from "./_components/header";
-import { ThemeProvider } from "@/shared/ui/theme";
+import { HeadThemeProvider, ThemeProvider } from "@/shared/ui/theme";
 
 export const metadata: Metadata = {
   title: {
@@ -16,8 +16,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning={process.env.NODE_ENV === "development"} >
       <head>
+        <HeadThemeProvider />
         <HeadImports />
       </head>
       <body>

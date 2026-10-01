@@ -35,6 +35,24 @@ function getPreferredThemeCore(theme: ThemeName | null): DeterminedThemeName {
     return theme;
 }
 
+export function HeadThemeProvider() {
+    return (
+        <script
+            dangerouslySetInnerHTML={{
+                __html: `
+                    (function() {
+                        var theme = localStorage.getItem('${localStorageKey}') || '${DefaultThemeName}';
+                        if (theme === '${"system" as ThemeName}') {
+                            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? '${"dark" as DeterminedThemeName}' : '${"light" as DeterminedThemeName}';
+                        }
+                        document.documentElement.dataset.theme = theme;
+                    })();
+                `,
+            }}
+        />
+    )
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [theme, setTheme] = React.useState<ThemeName>(getStoredThemeOrDefault);
     const setThemeAndStore = (theme: ThemeName) => {
