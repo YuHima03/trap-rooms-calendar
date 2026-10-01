@@ -16,6 +16,7 @@ export default function nextConfig(phase: string): NextConfig {
     images: {
       unoptimized: true,
     },
+    typedRoutes: true,
     // Rewrite API requests to the backend during development.
     ...(development && getRewritesForDevelopment(apiOrigin)),
   };
