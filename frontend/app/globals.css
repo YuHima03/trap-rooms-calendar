@@ -113,8 +113,8 @@
   /* Text */
   --theme-text-default-primary: var(--color-black);
   --theme-text-default-secondary: var(--color-gray-7);
-  --theme-text-default-tertiary: var(--color-gray-5);
-  --theme-text-disabled-primary: var(--color-gray-4);
+  --theme-text-default-tertiary: var(--color-gray-4);
+  --theme-text-disabled-primary: var(--color-gray-5);
   --theme-text-inv-primary: var(--color-white);
   --theme-text-note-primary: var(--color-blue-6);
   --theme-text-success-primary: var(--color-green-6);
@@ -125,9 +125,10 @@
   /* Background */
   --theme-background-default-primary: var(--color-white);
   --theme-background-default-secondary: var(--color-gray-0);
-  --theme-background-default-tertiary: var(--color-gray-1);
+  --theme-background-default-tertiary: var(--color-gray-2);
   --theme-background-button-primary: var(--color-blue-5);
   --theme-background-button-secondary: var(--color-blue-6);
+  --theme-background-inv-primary: var(--color-gray-6);
   --theme-background-note-primary: var(--color-blue-0);
   --theme-background-success-primary: var(--color-green-0);
   --theme-background-warning-primary: var(--color-yellow-0);
@@ -144,7 +145,10 @@
 :root[data-theme="dark"] {
   /* Text */
   --theme-text-default-primary: var(--color-gray-0);
+  --theme-text-default-secondary: var(--color-gray-3);
+  --theme-text-default-tertiary: var(--color-gray-5);
   --theme-text-disabled-primary: var(--color-gray-4);
+  --theme-text-inv-primary: var(--color-black);
   --theme-text-note-primary: var(--color-blue-3);
   --theme-text-warning-primary: var(--color-yellow-2);
 
@@ -152,6 +156,7 @@
   --theme-background-default-primary: var(--color-black);
   --theme-background-default-secondary: var(--color-gray-9);
   --theme-background-default-tertiary: var(--color-gray-8);
+  --theme-background-inv-primary: var(--color-gray-0);
   --theme-background-warning-primary: var(--color-yellow-8);
 
   /* Border */
@@ -176,6 +181,7 @@
   --color-bg-default-tertiary: var(--theme-background-default-tertiary);
   --color-bg-button-primary: var(--theme-background-button-primary);
   --color-bg-button-secondary: var(--theme-background-button-secondary);
+  --color-bg-inv-primary: var(--theme-background-inv-primary);
   --color-bg-note-primary: var(--theme-background-note-primary);
   --color-bg-success-primary: var(--theme-background-success-primary);
   --color-bg-warning-primary: var(--theme-background-warning-primary);
