@@ -1,0 +1,27 @@
+@reference "../globals.css";
+
+.wrap {
+  @apply flex flex-row gap-x-0.5
+    p-1
+    rounded-full
+    bg-gray-1 dark:bg-transparent
+    border border-gray-2 dark:border-gray-6;
+}
+
+.radioButton {
+  @apply w-6 h-6 flex items-center justify-center rounded-full;
+
+  &[aria-checked="false"] {
+    @apply border border-transparent transition ease-out;
+
+    &:hover {
+      @apply cursor-pointer border-gray-3 dark:border-gray-6;
+    }
+  }
+
+  &[aria-checked="true"] {
+    @apply text-default-primary dark:text-inv-primary
+      bg-default-primary dark:bg-gray-2
+      border border-gray-3 dark:border-0;
+  }
+}

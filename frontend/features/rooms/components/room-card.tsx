@@ -31,7 +31,7 @@ export function RoomCard({
   return (
     <div
       data-status={status}
-      className="p-3 flex flex-col gap-y-2 border-1 border-default-secondary rounded-xl data-[status=available]:border-2 data-[status=available]:border-teal-400 data-[status=occupied]:border-2 data-[status=occupied]:border-dangerous-primary data-[status=closed]:bg-default-tertiary data-[status=closed]:text-disabled-primary data-[status=closed]:border-default-primary"
+      className="p-3 flex flex-col gap-y-2 border border-default-secondary rounded-xl data-[status=available]:border-2 data-[status=available]:border-teal-400 data-[status=occupied]:border-2 data-[status=occupied]:border-dangerous-primary data-[status=closed]:bg-default-tertiary data-[status=closed]:text-disabled-primary data-[status=closed]:border-default-primary"
     >
       <div className="flex flex-row flex-wrap gap-2">
         <span className="grow tx-body-strong truncate text-inherit">
@@ -39,12 +39,12 @@ export function RoomCard({
         </span>
         {state.occupied ? (
           <span className="flex flex-row flex-nowrap gap-x-1 items-center tx-body2-strong text-dangerous-primary">
-            <MaterialSymbol name="do_not_disturb_on" className="text-sm!" />
+            <MaterialSymbol className="text-sm!" name="do_not_disturb_on" />
             占有中
           </span>
         ) : state.available ? (
-          <span className="tx-body2-strong text-teal-600">
-            <MaterialSymbol name="check_circle" className="text-sm!" />
+          <span className="flex flex-row flex-nowrap gap-x-1 items-center tx-body2-strong text-teal-600">
+            <MaterialSymbol className="text-sm!" name="check_circle" fill />
             現在利用可
           </span>
         ) : null}

@@ -6,10 +6,8 @@ import { usePathname } from "next/navigation";
 import { useCurrentUser } from "@/features/auth/auth-provider";
 import { MaterialSymbolName } from "@/shared/config/material-symbols";
 import { Route } from "next";
-import { MaterialSymbolSizes, MaterialSymbol } from "@/shared/ui/material-symbol";
-import { getPreferredTheme, usePreferredTheme, useStoredTheme } from "@/shared/ui/theme";
-import { isThemeName, ThemeName, themes } from "@/shared/config/themes";
-import clsx from "clsx";
+import { MaterialSymbol } from "@/shared/ui/material-symbol";
+import { ThemeSwitcher } from "./theme-switcher";
 
 const links = [
   { href: "/", label: "ホーム", icon: "home" },
@@ -92,51 +90,4 @@ function UserIcon({ user, traqUrl }: {
       {!traqUrl && <span className="tx-body2">{user.name}</span>}
     </span>
   );
-}
-
-function ThemeSwitcher() {
-  const { theme, setTheme } = useStoredTheme();
-
-  const ThemeIconRadioButton = ({ theme, selected }: { theme: ThemeName; selected?: boolean; }) => {
-    const iconName = ({
-      light: "light_mode",
-      dark: "dark_mode",
-      system: "desktop_windows"
-    } as const satisfies Record<ThemeName, MaterialSymbolName>)[theme];
-
-    const label = ({
-      light: "ライトモード",
-      dark: "ダークモード",
-      system: "システム設定に従う"
-    } as const satisfies Record<ThemeName, string>)[theme];
-
-    return (
-      <span
-        className={clsx(
-          "w-6 h-6 flex items-center justify-center select-none rounded-full",
-          !selected && "hover:cursor-pointer hover:border border-transparent hover:border-tx-default-tertiary transition ease-out",
-          selected && "text-inv-primary bg-inv-primary"
-        )}
-        role="radio"
-        title={label}
-        aria-checked={selected}
-        tabIndex={selected ? -1 : 0}
-        onClick={() => !selected && setTheme(theme)}
-      >
-        <MaterialSymbol className="text-lg!" name={iconName} weight={300} fill={selected} />
-      </span>
-    )
-  }
-
-  return (
-    <div 
-      className="flex flex-row gap-x-0.5 p-1 rounded-full border border-default-secondary"
-      role="radiogroup"
-      aria-label="テーマ切り替え"
-    >
-      {themes.map(themeName => (
-        <ThemeIconRadioButton key={themeName} theme={themeName} selected={theme === themeName} />
-      ))}
-    </div>
-  )
 }
