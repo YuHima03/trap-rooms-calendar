@@ -34,4 +34,5 @@ LICENSE
 !.git/refs/heads/**
 
 frontend/out
+!frontend/.env
 proto/gen
