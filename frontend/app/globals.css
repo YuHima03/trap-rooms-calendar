@@ -158,6 +158,8 @@
   --theme-background-default-primary: var(--color-black);
   --theme-background-default-secondary: var(--color-gray-9);
   --theme-background-default-tertiary: var(--color-gray-8);
+  --theme-background-button-primary: var(--color-blue-3);
+  --theme-background-button-secondary: var(--color-blue-4);
   --theme-background-warning-primary: var(--color-yellow-8);
 
   /* Border */
