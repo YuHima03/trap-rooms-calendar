@@ -39,7 +39,7 @@ export function Vacancies() {
   const rooms = groupRooms(data?.vacantRooms ?? []).sort(compareVacantRooms);
 
   return (
-    <div className="grid md:grid-cols-2 gap-3 grow">
+    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 grow">
       {rooms.length === 0 ? (
         <p>現在利用可能な部屋はありません。</p>
       ) : (
