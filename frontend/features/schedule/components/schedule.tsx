@@ -80,9 +80,7 @@ export function Schedule() {
         <>
           {!days.some(({ date }) => date === jstDateKey(now)) && (
             <div className="flex flex-col gap-y-3 md:flex-row md:flex-nowrap md:gap-x-4 md:items-center">
-              <div className="tx-body-strong w-[6rem] shrink-0">
-                <h3>今日</h3>
-              </div>
+              <TimelineDateLabel date={jstDateKey(now)} now={now} />
               <p>本日は進捗部屋がありません。</p>
             </div>
           )}
@@ -91,12 +89,8 @@ export function Schedule() {
               key={date}
               className="flex flex-col gap-y-3 md:flex-row md:flex-nowrap md:gap-x-4"
             >
-              <div className="tx-body-strong w-[6rem] md:pt-2 shrink-0">
-                <h3>
-                  <span>{dateLabel(date, now)}</span>
-                </h3>
-              </div>
-              <div className="grid md:grid-cols-2 gap-3 grow">
+              <TimelineDateLabel date={date} now={now} />
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 grow">
                 {groups.map((group) => (
                   <RoomCard
                     key={group.key}
@@ -116,4 +110,14 @@ export function Schedule() {
       )}
     </>
   );
+}
+
+function TimelineDateLabel({ date, now }: { date: string; now: number }) {
+  return (
+    <div className="flex tx-body-strong md:w-24 md:py-3 shrink-0">
+      <h3>
+        {dateLabel(date, now)}
+      </h3>
+    </div>
+  )
 }

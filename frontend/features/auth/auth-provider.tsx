@@ -33,12 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { data, error, isLoading, refetch } = useRpcQuery(loadUser);
 
   if (isLoading) {
-    return (
-      <main className="mx-auto max-w-5xl p-6">
-        <h1>進捗部屋情報</h1>
-        <output className="mt-4 block">ログイン情報を確認しています…</output>
-      </main>
-    );
+    return (<></>);
   }
   if (error) {
     return (

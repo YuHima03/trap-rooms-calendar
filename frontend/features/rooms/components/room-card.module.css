@@ -1,0 +1,25 @@
+@reference "../../../app/globals.css";
+
+.wrap {
+  @apply p-3 flex flex-col gap-y-2 border border-default-secondary rounded-xl;
+
+  &[data-status="available"] {
+    @apply border-2 border-teal-400;
+  }
+  &[data-status="occupied"] {
+    @apply border-2 border-dangerous-primary;
+  }
+  &[data-status="closed"] {
+    @apply border-2 border-default-primary bg-default-tertiary text-disabled-primary;
+  }
+}
+
+.statusText_available {
+  @apply flex flex-row flex-nowrap gap-x-1 items-center
+    tx-body2-strong text-teal-600 dark:text-teal-400;
+}
+
+.statusText_occupied {
+  @apply flex flex-row flex-nowrap gap-x-1 items-center
+    tx-body2-strong text-dangerous-primary;
+}

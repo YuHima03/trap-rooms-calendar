@@ -1,4 +1,3 @@
-import { ApiInformation } from "@/features/schedule/components/api-information";
 import { Schedule } from "@/features/schedule/components/schedule";
 
 export default function HomePage() {
