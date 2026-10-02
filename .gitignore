@@ -402,10 +402,15 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/csharp
 
 # Docker .env files
-.env
+.env*
+!.env.example
 
 # Tailwind CSS generated
 src/RoomsCalendar.Client/wwwroot/css/app.css
 
 # Mounted db files
 db/mysql
+
+.nx/cache
+.nx/workspace-data
+.nx/migrate-runs

@@ -1,0 +1,53 @@
+services:
+  server:
+    build:
+      context: ../
+      dockerfile: build/Dockerfile
+      args:
+        - BUILD_CONFIGURATION=Debug
+    ports:
+      - 80:8080
+    env_file:
+      - path: ../backend/RoomsCalendar.Server/.env
+        required: false
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORT: 8080
+      NS_MARIADB_HOSTNAME: db
+      NS_MARIADB_PORT: $NS_MARIADB_PORT # do not use $MARIADB_EXPOSE_PORT here, because the server container connects to the db container directly
+      NS_MARIADB_USER: $NS_MARIADB_USER
+      NS_MARIADB_PASSWORD: $NS_MARIADB_PASSWORD
+      NS_MARIADB_DATABASE: $NS_MARIADB_DATABASE
+    mem_limit: 256m
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:13
+    restart: always
+    ports:
+      - $MARIADB_EXPOSE_PORT:3306
+    environment:
+      MARIADB_PORT: $NS_MARIADB_PORT
+      MARIADB_USER: $NS_MARIADB_USER
+      MARIADB_PASSWORD: $NS_MARIADB_PASSWORD
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: $NS_MARIADB_DATABASE
+    volumes:
+      - ../db/init:/docker-entrypoint-initdb.d
+      - ../db/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "-h", "db", "-P", "$NS_MARIADB_PORT", "-u", "$NS_MARIADB_USER", "-p$NS_MARIADB_PASSWORD", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 1s
+    mem_limit: 256m
+
+  adminer:
+    image: adminer:6
+    restart: always
+    ports:
+      - 18080:8080
+    mem_limit: 64m

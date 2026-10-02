@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package event.v1;
+
+import "google/protobuf/timestamp.proto";
+import "room/v1/room.proto";
+
+option csharp_namespace = "RoomsCalendar.Server.Protos.Event.V1";
+
+service EventService {
+  // Retrieve a list of events for the specified time range.
+  rpc GetEvents(GetEventsRequest) returns (GetEventsResponse);
+}
+
+message Event {
+  // The unique identifier of the event.
+  string id = 1;
+  // The name of the event.
+  string name = 2;
+  // The place where the event will be held.
+  oneof place {
+    // The room where the event will be held.
+    room.v1.VerifiedRoom room = 3;
+    // The name of the place where the event will be held.
+    string place_name = 4;
+  }
+  // The start time of the event.
+  google.protobuf.Timestamp start_time = 5;
+  // The end time of the event.
+  google.protobuf.Timestamp end_time = 6;
+  // Whether the event occupies a place (room or named place).
+  bool occupies_place = 7;
+}
+
+message GetEventsRequest {
+  // The start time of the desired time range.
+  optional google.protobuf.Timestamp start_time = 1;
+  // The end time of the desired time range.
+  optional google.protobuf.Timestamp end_time = 2;
+}
+
+message GetEventsResponse {
+  // A list of events for the specified time range.
+  repeated Event events = 1;
+}

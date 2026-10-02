@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package room.v1;
+
+option csharp_namespace = "RoomsCalendar.Server.Protos.Room.V1";
+
+service RoomCalendarService {
+  // Retrieve or create a room calendar URL for the logged-in user.
+  rpc GetOrCreateRoomCalendarUrl(GetOrCreateRoomCalendarUrlRequest) returns (GetOrCreateRoomCalendarUrlResponse);
+  // Refresh the room calendar URL for the logged-in user.
+  rpc RefreshRoomCalendarUrl(RefreshRoomCalendarUrlRequest) returns (RefreshRoomCalendarUrlResponse);
+}
+
+message GetOrCreateRoomCalendarUrlRequest {}
+
+message GetOrCreateRoomCalendarUrlResponse {
+  // The URL of the room calendar.
+  string url = 1;
+}
+
+message RefreshRoomCalendarUrlRequest {
+  // The old URL of the room calendar to be refreshed.
+  string old_url = 1;
+}
+
+message RefreshRoomCalendarUrlResponse {
+  // The refreshed URL of the room calendar.
+  string url = 1;
+}

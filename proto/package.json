@@ -1,0 +1,14 @@
+{
+  "name": "proto",
+  "version": "1.0.0",
+  "author": "Yusuke Toyoda",
+  "license": "ISC",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./*": "./gen/*.ts"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.15.0"
+  }
+}

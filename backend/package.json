@@ -1,0 +1,11 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "keywords": [],
+  "author": "Yusuke Toyoda",
+  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "dev": "dotnet clean ./RoomsCalendar.Server && dotnet run --project ./RoomsCalendar.Server"
+  }
+}

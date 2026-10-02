@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package user.v1;
+
+option csharp_namespace = "RoomsCalendar.Server.Protos.User.V1";
+
+service UserService {
+  // Retrieve the information of the logged-in user.
+  rpc GetMe(GetMeRequest) returns (GetMeResponse);
+}
+
+message User {
+  // The unique identifier of the user.
+  string id = 1;
+  // The name of the user.
+  string name = 2;
+}
+
+message GetMeRequest {}
+
+message GetMeResponse {
+  // The user information.
+  User user = 1;
+}
