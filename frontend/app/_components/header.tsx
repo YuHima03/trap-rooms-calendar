@@ -8,6 +8,7 @@ import { MaterialSymbolName } from "@/shared/config/material-symbols";
 import { Route } from "next";
 import { MaterialSymbol } from "@/shared/ui/material-symbol";
 import { ThemeSwitcher } from "./theme-switcher";
+import clsx from "clsx";
 
 const links = [
   { href: "/", label: "ホーム", icon: "home" },
@@ -37,6 +38,7 @@ export function Header() {
         })}
       </nav>
       <ThemeSwitcher />
+      <HelpLink />
       {user && <UserIcon user={user} traqUrl={traqUrl} />}
     </header>
   );
@@ -50,8 +52,12 @@ function NavLink({ href, label, icon, beta, isCurrentPage }: (typeof links)[numb
       key={href}
       href={href}
       aria-current={isCurrentPage ? "page" : undefined}
-      className="tx-button py-2 hover:opacity-80 aria-[current=page]:text-note-primary aria-[current=page]:border-b-2 aria-[current=page]:border-tx-note-primary"
-      aria-label={`${label} に移動する`}
+      aria-label={`${label}に移動する`}
+      className={clsx(
+        "tx-button py-2 no-underline",
+        "hover:opacity-70",
+        "aria-[current=page]:text-note-primary aria-[current=page]:border-b-2 aria-[current=page]:border-tx-note-primary",
+      )}
     >
       <span className="sm:hidden">
         <MaterialSymbol className="text-2xl!" name={icon} fill={isCurrentPage} />
@@ -66,6 +72,24 @@ function NavLink({ href, label, icon, beta, isCurrentPage }: (typeof links)[numb
       </span>
     </Link>
   );
+}
+
+function HelpLink() {
+  return (
+    <Link
+      href="/help"
+      className="tx-button no-underline hover:opacity-70"
+      aria-current={usePathname().startsWith("/help") ? "page" : undefined}
+      aria-label="ヘルプページに移動する"
+    >
+      <span className="sm:hidden">
+        <MaterialSymbol className="text-2xl!" name="help" />
+      </span>
+      <span className="hidden sm:flex">
+        ヘルプ
+      </span>
+    </Link>
+  )
 }
 
 function UserIcon({ user, traqUrl }: {

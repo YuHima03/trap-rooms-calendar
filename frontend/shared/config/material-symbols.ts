@@ -4,6 +4,7 @@ export const materialSymbolNames = [
   "dark_mode",
   "desktop_windows",
   "do_not_disturb_on",
+  "help",
   "home",
   "lightbulb_2",
   "light_mode",

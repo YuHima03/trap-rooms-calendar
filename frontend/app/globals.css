@@ -152,6 +152,7 @@
   --theme-text-inv-primary: var(--color-black);
   --theme-text-note-primary: var(--color-blue-3);
   --theme-text-warning-primary: var(--color-yellow-2);
+  --theme-text-dangerous-primary: var(--color-red-4);
 
   /* Background */
   --theme-background-default-primary: var(--color-black);
@@ -205,6 +206,9 @@
 @utility tx-h2 {
   @apply font-semibold font-sans leading-6 text-xl text-default-primary;
 }
+@utility tx-h3 {
+  @apply font-bold font-sans leading-5 text-base text-default-primary;
+}
 @utility tx-body {
   @apply font-normal font-sans leading-5 text-base text-default-primary;
 }
@@ -236,9 +240,9 @@
 
 @layer base {
   :root {
-    @apply tx-body;
-    @apply bg-default-primary;
-    @apply box-border;
+    @apply tx-body
+      bg-default-primary
+      box-border;
   }
   h1 {
     @apply tx-h1;
@@ -246,8 +250,25 @@
   h2 {
     @apply tx-h2;
   }
+  h3 {
+    @apply tx-h3;
+  }
   code {
-    color: #c02d76;
+    @apply font-mono
+      px-1 py-px rounded-sm
+      bg-default-secondary;
+  }
+  a {
+    @apply text-note-primary underline;
+    
+    &:hover {
+      @apply no-underline;
+    }
+  }
+  p {
+    &> * {
+      @apply mx-1;
+    }
   }
 }
 
@@ -256,6 +277,6 @@
     @apply tx-button text-inv-primary rounded-lg bg-button-primary px-5 py-2 hover:cursor-pointer hover:bg-button-secondary disabled:cursor-not-allowed disabled:opacity-50;
   }
   .button-secondary {
-    @apply tx-button border-default-secondary border-1 rounded-lg px-5 py-2 hover:cursor-pointer hover:bg-default-secondary disabled:cursor-not-allowed disabled:opacity-50;
+    @apply tx-button border-default-secondary border rounded-lg px-5 py-2 hover:cursor-pointer hover:bg-default-secondary disabled:cursor-not-allowed disabled:opacity-50;
   }
 }

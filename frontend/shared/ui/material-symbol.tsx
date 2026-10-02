@@ -55,7 +55,7 @@ export function MaterialSymbol({
   return (
     <span
       className={clsx(
-        "material-symbols-rounded select-none",
+        "material-symbols-rounded leading-none align-middle select-none",
         className,
       )}
       aria-hidden="true"
