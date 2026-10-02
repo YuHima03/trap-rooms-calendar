@@ -1,17 +1,13 @@
 @reference "../globals.css";
 
 .wrap {
-  @apply flex flex-row gap-x-0.5
-    p-1
-    rounded-full
-    bg-gray-1 dark:bg-transparent
-    border border-gray-2 dark:border-gray-6;
+  @apply flex flex-row gap-x-0.5 p-1 rounded-full bg-gray-1 dark:bg-transparent border border-gray-2 dark:border-gray-6;
 }
 
 .radioButton {
   @apply w-6 h-6 flex items-center justify-center rounded-full;
 
-  &[aria-checked="false"] {
+  &:has(input:not(:checked)) {
     @apply border border-transparent transition ease-out;
 
     &:hover {
@@ -19,9 +15,16 @@
     }
   }
 
-  &[aria-checked="true"] {
-    @apply text-default-primary dark:text-inv-primary
-      bg-default-primary dark:bg-gray-2
-      border border-gray-3 dark:border-0;
+  &:has(input:checked) {
+    @apply text-default-primary dark:text-inv-primary bg-default-primary dark:bg-gray-2 border border-gray-3 dark:border-0;
   }
+
+  &:has(input:focus-visible) {
+    @apply outline-2 outline-offset-2;
+    outline-color: var(--theme-text-default-primary);
+  }
+}
+
+.radioInput {
+  @apply sr-only;
 }
