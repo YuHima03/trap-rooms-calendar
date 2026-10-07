@@ -24,6 +24,10 @@ public class Program
 
         ConfigureCalendarServices(builder.Services, builder.Configuration);
 
+        _ = builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.TypeInfoResolverChain.Insert(0, HttpJsonSerializerContext.Default);
+        });
         _ = builder.Services.AddAuthorization();
         _ = builder.Services.AddGrpc();
         _ = builder.Services.AddAntiforgery();
