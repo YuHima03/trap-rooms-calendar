@@ -3,8 +3,8 @@ using Knoq.Extensions.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using RoomsCalendar.Infrastructure;
 using RoomsCalendar.Server.Configurations;
 using RoomsCalendar.Server.Services;
 using RoomsCalendar.Share.Configuration;
@@ -18,16 +18,18 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateSlimBuilder(args);
 
         LoadConfigurationFromEnvFiles(builder.Configuration);
 
         ConfigureCalendarServices(builder.Services, builder.Configuration);
 
-        // API controllers
+        _ = builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.TypeInfoResolverChain.Insert(0, HttpJsonSerializerContext.Default);
+        });
+        _ = builder.Services.AddAuthorization();
         _ = builder.Services.AddGrpc();
-        _ = builder.Services.AddControllers();
-
         _ = builder.Services.AddAntiforgery();
 
         var app = builder.Build();
@@ -132,11 +134,11 @@ public class Program
         // Configure database context and repositories
         //
         services.Configure<NsMySqlConfiguration>(configuration);
-        services.AddDbContextFactory<Infrastructure.Repository.CalendarStreamsRepository>((sp, opt) =>
+        services.AddSingleton(sp =>
         {
-            opt.UseMySQL(sp.GetRequiredService<IOptions<NsMySqlConfiguration>>().Value.GetConnectionString());
+            var connectionString = sp.GetRequiredService<IOptions<NsMySqlConfiguration>>().Value.GetConnectionString();
+            return new RepositoryFactory(connectionString);
         });
-        services.AddScoped<Share.Domain.Repository.ICalendarStreamsRepository>(sp => sp.GetRequiredService<Infrastructure.Repository.CalendarStreamsRepository>());
 
         //
         // Configure authentication

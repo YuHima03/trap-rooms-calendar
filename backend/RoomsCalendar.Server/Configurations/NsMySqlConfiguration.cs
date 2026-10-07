@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+﻿using MySqlConnector;
 using RoomsCalendar.Share.Configuration;
 
 namespace RoomsCalendar.Server.Configurations

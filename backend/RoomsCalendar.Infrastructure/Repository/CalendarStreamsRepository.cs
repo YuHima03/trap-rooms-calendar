@@ -1,65 +1,132 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using Dapper;
+using MySqlConnector;
+using RoomsCalendar.Share.Domain;
 using RoomsCalendar.Share.Domain.Repository;
 
-namespace RoomsCalendar.Infrastructure.Repository
+namespace RoomsCalendar.Infrastructure.Repository;
+
+sealed class CalendarStreamsRepository(MySqlConnection connection) : ICalendarStreamsRepository
 {
-    public sealed class CalendarStreamsRepository(DbContextOptions<CalendarStreamsRepository> options) : DbContext(options), ICalendarStreamsRepository
+    const string TableName = "calendar_streams";
+
+    public static async ValueTask<CalendarStreamsRepository> CreateAsync(string connectionString, CancellationToken ct = default)
     {
-        DbSet<CalendarStream> CalendarStreams { get; set; }
+        var conn = new MySqlConnection(connectionString);
+        await conn.OpenAsync(ct);
+        return new CalendarStreamsRepository(conn);
+    }
 
-        async ValueTask<Share.Domain.CalendarStream?> ICalendarStreamsRepository.TryGetCalendarStreamAsync(Guid streamId, CancellationToken ct)
+    public void Dispose()
+    {
+        connection?.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (connection is not null)
         {
-            return await CalendarStreams
-                .AsNoTracking()
-                .Where(cs => cs.Id == streamId)
-                .Select(cs => cs.ToDomain())
-                .SingleOrDefaultAsync(ct);
+            await connection.DisposeAsync();
         }
+        GC.SuppressFinalize(this);
+    }
 
-        async ValueTask<Share.Domain.CalendarStream> ICalendarStreamsRepository.GetOrCreateUserCalendarStreamAsync(string username, CancellationToken ct)
-        {
-            var cs = await CalendarStreams
-                .AsNoTracking()
-                .Where(cs => cs.Username == username)
-                .Select(cs => cs.ToDomain())
-                .SingleOrDefaultAsync(ct);
-            if (cs is not null)
-            {
-                return cs;
-            }
-            CalendarStream rec = new()
-            {
-                Id = Guid.CreateVersion7(),
-                Username = username,
-                Token = GenerateToken()
-            };
-            CalendarStreams.Add(rec);
-            await SaveChangesAsync(ct);
-            return rec.ToDomain();
-        }
+    ~CalendarStreamsRepository()
+    {
+        Dispose();
+    }
 
-        async ValueTask<Share.Domain.CalendarStream?> ICalendarStreamsRepository.TryRefreshCalendarStreamTokenAsync(Guid streamId, CancellationToken ct)
+    async ValueTask<CalendarStream?> ICalendarStreamsRepository.TryGetCalendarStreamAsync(Guid streamId, CancellationToken ct)
+    {
+        return await TryGetCalendarStreamAsync(streamId, null, ct);
+    }
+
+    async ValueTask<CalendarStream?> TryGetCalendarStreamAsync(Guid streamId, IDbTransaction? transaction, CancellationToken ct)
+    {
+        return (await connection.QuerySingleOrDefaultAsync<CalendarStreamDto>(
+            $"""
+                SELECT
+                    id, username, token, created_at, updated_at
+                FROM {TableName}
+                WHERE id = @streamId
+                """,
+            new { streamId, cancellationToken = ct },
+            transaction
+        ))?.ToDomain();
+    }
+
+    async ValueTask<CalendarStream> ICalendarStreamsRepository.GetOrCreateUserCalendarStreamAsync(string username, CancellationToken ct)
+    {
+        await using var tx = await connection.BeginTransactionAsync(ct);
+        var cs = await connection.QuerySingleOrDefaultAsync<CalendarStreamDto>(
+            $"""
+                SELECT
+                    id, username, token, created_at, updated_at
+                FROM {TableName}
+                WHERE username = @username
+                """,
+            new { username, cancellationToken = ct },
+            tx
+        );
+        if (cs is not null)
         {
-            var cs = await CalendarStreams
-                .Where(cs => cs.Id == streamId)
-                .SingleOrDefaultAsync(ct);
-            if (cs is null)
-            {
-                return null;
-            }
-            cs.Token = GenerateToken();
-            await SaveChangesAsync(ct);
             return cs.ToDomain();
         }
-
-        const string TokenChars = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
-        const int TokenLength = 16;
-
-        static string GenerateToken()
+        CalendarStreamDto newStreamInfo = new()
         {
-            Span<char> token = stackalloc char[TokenLength];
-            Random.Shared.GetItems(TokenChars.AsSpan(), token);
-            return token.ToString();
+            Id = Guid.CreateVersion7(),
+            Username = username,
+            Token = GenerateToken(),
+        };
+        await connection.ExecuteAsync(
+            $"""
+                INSERT INTO {TableName} (id, username, token)
+                VALUES (@Id, @Username, @Token)
+                """,
+            new
+            {
+                newStreamInfo.Id,
+                newStreamInfo.Username,
+                newStreamInfo.Token,
+                cancellationToken = ct
+            },
+            tx
+        );
+        await tx.CommitAsync(ct);
+        return newStreamInfo.ToDomain();
+    }
+
+    async ValueTask<CalendarStream?> ICalendarStreamsRepository.TryRefreshCalendarStreamTokenAsync(Guid streamId, CancellationToken ct)
+    {
+        await using var tx = await connection.BeginTransactionAsync(ct);
+        var cs = await TryGetCalendarStreamAsync(streamId, tx, ct);
+        if (cs is null)
+        {
+            return null;
         }
+        var newStreamInfo = cs with { Token = GenerateToken() };
+        await connection.ExecuteAsync(
+            $"""
+                UPDATE {TableName}
+                SET token = @Token
+                WHERE id = @id
+                """,
+            new { newStreamInfo.Token, newStreamInfo.Id, cancellationToken = ct },
+            tx
+        );
+        await tx.CommitAsync(ct);
+        return newStreamInfo;
+    }
+
+    const string TokenChars = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+    const int TokenLength = 16;
+
+    static string GenerateToken()
+    {
+        Span<char> token = stackalloc char[TokenLength];
+        Random.Shared.GetItems(TokenChars.AsSpan(), token);
+        return token.ToString();
     }
 }
+

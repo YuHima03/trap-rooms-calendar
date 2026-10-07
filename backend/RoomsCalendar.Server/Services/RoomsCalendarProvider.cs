@@ -1,6 +1,5 @@
 ﻿using RoomsCalendar.Share.Constants;
 using RoomsCalendar.Share.Domain;
-using System.Runtime.CompilerServices;
 using ZLinq;
 
 namespace RoomsCalendar.Server.Services
@@ -16,7 +15,8 @@ namespace RoomsCalendar.Server.Services
         readonly SemaphoreSlim _lock = new(1, 1);
 
         string? _cachedAll = null;
-        string? _cachedExcludeOccupied = null;
+
+        // string? _cachedExcludeOccupied = null;
 
         public async ValueTask<string> GetIcalStringAsync(bool excludeOccupied, CancellationToken ct = default)
         {

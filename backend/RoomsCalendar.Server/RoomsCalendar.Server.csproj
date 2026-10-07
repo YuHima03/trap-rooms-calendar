@@ -8,6 +8,13 @@
     <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible>true</IsAotCompatible>
+    <OptimizationPreference>speed</OptimizationPreference>
+    <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.8.3" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.83.0" />
@@ -23,6 +30,11 @@
   <ItemGroup>
     <ProjectReference Include="..\RoomsCalendar.Infrastructure\RoomsCalendar.Infrastructure.csproj" />
     <ProjectReference Include="..\RoomsCalendar.Share\RoomsCalendar.Share.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Ical.Net creates calendar data types via reflection; preserve their constructors and members. -->
+    <TrimmerRootAssembly Include="Ical.Net" />
   </ItemGroup>
 
   <ItemGroup>
