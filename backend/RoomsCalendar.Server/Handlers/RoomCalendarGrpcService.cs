@@ -1,15 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Grpc.Core;
+using RoomsCalendar.Infrastructure;
 using RoomsCalendar.Server.Protos.Room.V1;
 using RoomsCalendar.Share.Domain.Repository;
 
 namespace RoomsCalendar.Server.Handlers;
 
-sealed class RoomCalendarGrpcService(ICalendarStreamsRepository calendarStreams) : RoomCalendarService.RoomCalendarServiceBase
+sealed class RoomCalendarGrpcService(RepositoryFactory repoFactory) : RoomCalendarService.RoomCalendarServiceBase
 {
+    ValueTask<ICalendarStreamsRepository> CalendarStreamsRepository => repoFactory.CreateRepositoryAsync<ICalendarStreamsRepository>();
+
     public override async Task<GetOrCreateRoomCalendarUrlResponse> GetOrCreateRoomCalendarUrl(GetOrCreateRoomCalendarUrlRequest request, ServerCallContext context)
     {
+        await using var calendarStreams = await CalendarStreamsRepository;
         var username = GetUsername(context.GetHttpContext().User);
         var stream = await calendarStreams.GetOrCreateUserCalendarStreamAsync(username, context.CancellationToken);
         return new GetOrCreateRoomCalendarUrlResponse
@@ -25,6 +29,8 @@ sealed class RoomCalendarGrpcService(ICalendarStreamsRepository calendarStreams)
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid old URL format"));
         }
         var username = GetUsername(context.GetHttpContext().User);
+        
+        await using var calendarStreams = await CalendarStreamsRepository;
         var oldStream = await calendarStreams.TryGetCalendarStreamAsync(oldUrlData.Id, context.CancellationToken);
         if (oldStream is null || oldStream.Token != oldUrlData.Token || oldStream.Username != username)
         {

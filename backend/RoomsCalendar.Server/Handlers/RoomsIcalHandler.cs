@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using RoomsCalendar.Infrastructure;
 using RoomsCalendar.Infrastructure.Repository;
 using RoomsCalendar.Server.Services;
 using RoomsCalendar.Share.Domain.Repository;
@@ -17,7 +17,7 @@ namespace RoomsCalendar.Server.Handlers
         async ValueTask<IResult> GetRoomsIcalAsync(
             HttpContext ctx,
             [FromServices] RoomsCalendarProvider calendarProvider,
-            [FromServices] IDbContextFactory<CalendarStreamsRepository> repoFactory,
+            [FromServices] RepositoryFactory repoFactory,
             [FromRoute] string id,
             [FromRoute] string token,
             [FromQuery(Name = "excludeOccupied")] bool excludeOccupied = false)
@@ -35,7 +35,7 @@ namespace RoomsCalendar.Server.Handlers
                     guid = new(guidBytes);
                 }
 
-                await using var repo = (await repoFactory.CreateDbContextAsync(ct)) as ICalendarStreamsRepository;
+                await using var repo = await repoFactory.CreateRepositoryAsync<ICalendarStreamsRepository>(ct);
                 var cs = await repo.TryGetCalendarStreamAsync(guid, ct);
                 if (cs is null || cs.Token != token)
                 {
