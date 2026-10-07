@@ -33,6 +33,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Ical.Net creates calendar data types via reflection; preserve their constructors and members. -->
+    <TrimmerRootAssembly Include="Ical.Net" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Protobuf Include="..\..\proto\**\*.proto" Link="Protos\%(RecursiveDir)%(Filename)%(Extension)" Access="internal" GrpcServices="Server" ProtoRoot="..\..\proto" />
   </ItemGroup>
   
