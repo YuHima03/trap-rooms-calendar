@@ -51,7 +51,7 @@ sealed class CalendarStreamsRepository(MySqlConnection connection) : ICalendarSt
                 FROM {TableName}
                 WHERE id = @streamId
                 """,
-            new { streamId },
+            new { streamId, cancellationToken = ct },
             transaction
         ))?.ToDomain();
     }
@@ -66,7 +66,7 @@ sealed class CalendarStreamsRepository(MySqlConnection connection) : ICalendarSt
                 FROM {TableName}
                 WHERE username = @username
                 """,
-            new { username },
+            new { username, cancellationToken = ct },
             tx
         );
         if (cs is not null)
@@ -84,7 +84,13 @@ sealed class CalendarStreamsRepository(MySqlConnection connection) : ICalendarSt
                 INSERT INTO {TableName} (id, username, token)
                 VALUES (@Id, @Username, @Token)
                 """,
-            newStreamInfo,
+            new
+            {
+                newStreamInfo.Id,
+                newStreamInfo.Username,
+                newStreamInfo.Token,
+                cancellationToken = ct
+            },
             tx
         );
         await tx.CommitAsync(ct);
@@ -106,7 +112,7 @@ sealed class CalendarStreamsRepository(MySqlConnection connection) : ICalendarSt
                 SET token = @Token
                 WHERE id = @id
                 """,
-            new { newStreamInfo.Token, newStreamInfo.Id },
+            new { newStreamInfo.Token, newStreamInfo.Id, cancellationToken = ct },
             tx
         );
         await tx.CommitAsync(ct);
