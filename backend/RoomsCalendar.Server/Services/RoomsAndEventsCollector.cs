@@ -207,9 +207,9 @@ namespace RoomsCalendar.Server.Services
             yield break;
         }
 
-        public static Event KnoqResponseToDomainEvent(this Knoq.Models.ResponseEvent ev)
+        public static EventInfo KnoqResponseToDomainEvent(this Knoq.Models.ResponseEvent ev)
         {
-            return new Event(
+            return new EventInfo(
                 ev.EventId.GetValueOrDefault(),
                 ev.Name ?? "",
                 ev.Place ?? "",

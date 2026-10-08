@@ -7,9 +7,9 @@ namespace RoomsCalendar.Server.Handlers
     public class EventsHandler
     {
         [HttpGet]
-        [ProducesResponseType<Event[]>(StatusCodes.Status200OK)]
+        [ProducesResponseType<EventInfo[]>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        async ValueTask<Results<Ok<Event[]>, BadRequest<string>>> GetEventsAsync(
+        async ValueTask<Results<Ok<EventInfo[]>, BadRequest<string>>> GetEventsAsync(
             HttpContext ctx,
             [FromServices] IEventsProvider eventsProvider,
             [FromQuery(Name = "since")] DateTimeOffset? since = null,

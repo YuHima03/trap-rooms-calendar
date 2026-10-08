@@ -8,22 +8,22 @@ namespace RoomsCalendar.Server.Services
 {
     sealed class RoomsAndEventsProvider : IEventsProvider, IRoomsProvider
     {
-        readonly List<Event> _events = [];
+        readonly List<EventInfo> _events = [];
         readonly List<Share.Domain.Room> _rooms = [];
 
         public DateTimeOffset LastUpdatedAt { get; private set; }
 
         public string ProviderName => RoomsProviderNames.KnoqRegistered;
 
-        public ValueTask<Event[]> GetEventsAsync(DateTimeOffset since, DateTimeOffset until, CancellationToken ct)
+        public ValueTask<EventInfo[]> GetEventsAsync(DateTimeOffset since, DateTimeOffset until, CancellationToken ct)
         {
             lock (_events)
             {
                 var events = CollectionsMarshal.AsSpan(_events);
-                var idxStart = BinarySearch.LowerBound<Event, DateTimeOffset>(events, since, EventsExtensions.CompareStartsAt);
+                var idxStart = BinarySearch.LowerBound<EventInfo, DateTimeOffset>(events, since, EventsExtensions.CompareStartsAt);
                 if (idxStart == -1)
                 {
-                    return ValueTask.FromResult(Array.Empty<Event>());
+                    return ValueTask.FromResult(Array.Empty<EventInfo>());
                 }
                 return ValueTask.FromResult(events[idxStart..]
                     .AsValueEnumerable()
@@ -51,11 +51,11 @@ namespace RoomsCalendar.Server.Services
             }
         }
 
-        public ValueTask UpdateEventsAsync(IEnumerable<Event> events, DateTimeOffset since, CancellationToken ct)
+        public ValueTask UpdateEventsAsync(IEnumerable<EventInfo> events, DateTimeOffset since, CancellationToken ct)
         {
             lock (_events)
             {
-                var idx = BinarySearch.LowerBound<Event, DateTimeOffset>(CollectionsMarshal.AsSpan(_events), since, EventsExtensions.CompareStartsAt);
+                var idx = BinarySearch.LowerBound<EventInfo, DateTimeOffset>(CollectionsMarshal.AsSpan(_events), since, EventsExtensions.CompareStartsAt);
                 if (idx == 0)
                 {
                     _events.Clear();
@@ -114,14 +114,14 @@ namespace RoomsCalendar.Server.Services
 
     static class EventsExtensions
     {
-        public static readonly Comparer<Event> StartsAtComparer = Comparer<Event>.Create(CompareToStartsAt);
+        public static readonly Comparer<EventInfo> StartsAtComparer = Comparer<EventInfo>.Create(CompareToStartsAt);
 
-        public static int CompareStartsAt(this Event @event, DateTimeOffset other)
+        public static int CompareStartsAt(this EventInfo @event, DateTimeOffset other)
         {
             return @event.StartsAt.CompareTo(other);
         }
 
-        public static int CompareToStartsAt(this Event @event, Event other)
+        public static int CompareToStartsAt(this EventInfo @event, EventInfo other)
         {
             return @event.StartsAt.CompareTo(other.StartsAt);
         }
