@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>f78a42d4-e4fb-4223-a21e-ddb42f4ff6d4</UserSecretsId>
@@ -16,14 +16,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="1.8.3" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.83.0" />
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.83.0" />
-    <PackageReference Include="Ical.Net" Version="5.1.2" />
-    <PackageReference Include="KnoqNet.Extensions.Authentication" Version="1.0.0-alpha.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-    <PackageReference Include="SimpleBase" Version="5.6.0" />
+    <PackageReference Include="AngleSharp" Version="1.10.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.85.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.85.0" />
+    <PackageReference Include="Ical.Net" Version="5.2.4" />
+    <PackageReference Include="KnoqNet.Extensions.Authentication" Version="1.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="11.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="SimpleBase" Version="5.6.4" />
     <PackageReference Include="Yuh.Collections" Version="1.0.0-rc.3" />
   </ItemGroup>
 
