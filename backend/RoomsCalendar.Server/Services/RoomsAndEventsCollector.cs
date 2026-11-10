@@ -68,7 +68,7 @@ namespace RoomsCalendar.Server.Services
             {
                 return;
             }
-            var events = await knoq.Events.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
+            var events = await knoq.Events.GetAsync(q => q.QueryParameters.DateBegin = since, cancellationToken: ct) ?? [];
             using var filtered = events
                 .AsValueEnumerable()
                 .Select(InternalExtensions.KnoqResponseToDomainEvent)
@@ -85,7 +85,7 @@ namespace RoomsCalendar.Server.Services
             {
                 return;
             }
-            var rooms = await knoq.Rooms.GetAsync(q => q.QueryParameters.DateBegin = since.ToString("O"), cancellationToken: ct) ?? [];
+            var rooms = await knoq.Rooms.GetAsync(q => q.QueryParameters.DateBegin = since, cancellationToken: ct) ?? [];
             using var filterd = rooms
                 .AsValueEnumerable()
                 .Where(r => r.Verified is true)
@@ -213,8 +213,8 @@ namespace RoomsCalendar.Server.Services
                 ev.EventId.GetValueOrDefault(),
                 ev.Name ?? "",
                 ev.Place ?? "",
-                DateTimeOffset.Parse(ev.TimeStart ?? ""),
-                DateTimeOffset.Parse(ev.TimeEnd ?? ""),
+                ev.TimeStart ?? throw new InvalidOperationException("Event start time is null."),
+                ev.TimeEnd ?? throw new InvalidOperationException("Event end time is null."),
                 !ev.SharedRoom.GetValueOrDefault(true)
             );
         }
@@ -224,9 +224,9 @@ namespace RoomsCalendar.Server.Services
             return new KnoqRoom(
                 room.RoomId.GetValueOrDefault(),
                 room.Place ?? "",
-                DateTimeOffset.Parse(room.TimeStart ?? ""),
-                DateTimeOffset.Parse(room.TimeEnd ?? ""),
-                DateTimeOffset.Parse(room.UpdatedAt ?? "")
+                room.TimeStart ?? throw new InvalidOperationException("Room start time is null."),
+                room.TimeEnd ?? throw new InvalidOperationException("Room end time is null."),
+                room.UpdatedAt ?? throw new InvalidOperationException("Room update time is null.")
             );
         }
 

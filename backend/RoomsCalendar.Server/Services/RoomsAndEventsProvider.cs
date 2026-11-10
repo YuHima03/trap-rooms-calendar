@@ -150,8 +150,8 @@ namespace RoomsCalendar.Server.Services
         {
             return new Share.Domain.Room(
                 room.Place ?? "",
-                DateTimeOffset.Parse(room.TimeStart ?? ""),
-                DateTimeOffset.Parse(room.TimeEnd ?? "")
+                room.TimeStart ?? throw new InvalidOperationException("Room start time is null."),
+                room.TimeEnd ?? throw new InvalidOperationException("Room end time is null.")
             );
         }
     }
