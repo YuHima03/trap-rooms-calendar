@@ -1,5 +1,5 @@
 # Runtime
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-resolute-chiseled-extra AS runtime
+FROM mcr.microsoft.com/dotnet/runtime-deps:11.0-resolute-chiseled-extra AS runtime
 EXPOSE 8080
 USER $APP_UID
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
@@ -22,7 +22,7 @@ RUN --mount=type=bind,source=buf.yaml,target=buf.yaml \
     pnpm --filter frontend build
 
 # Backend build (ASP.NET)
-FROM mcr.microsoft.com/dotnet/sdk:10.0-azurelinux3.0-aot AS backend
+FROM mcr.microsoft.com/dotnet/sdk:11.0-azurelinux4.0-aot AS backend
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 RUN --mount=type=cache,target=/root/.nuget/packages \
