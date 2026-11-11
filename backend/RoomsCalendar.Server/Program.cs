@@ -184,11 +184,7 @@ public class Program
     static void ConfigurePipeline(WebApplication app)
 #pragma warning disable IDE0058 // Computed value is never used
     {
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseWebAssemblyDebugging();
-        }
-        else
+        if (!app.Environment.IsDevelopment())
         {
             // 0. exception handler (top of the pipeline)
             app.UseExceptionHandler("/Error");
